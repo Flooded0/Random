@@ -249,4 +249,4 @@ return {
 		["SkyboxRt"] = "http://www.roblox.com/asset/?id=2046136939",
 		["SkyboxUp"] = "http://www.roblox.com/asset/?id=2046136551"
 	}
-}
+};
