@@ -56,7 +56,7 @@ local function FormatValue(Value)
                 return ("TweenInfo.new(%s)"):format(table.concat(Fields, ", "));
             else
                 return "TweenInfo.new()";
-            end
+            end;
         end,
         Random = function() return ("Random.new(%d)"):format(Value.Seed) end,
         Axes = function()
