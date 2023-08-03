@@ -81,8 +81,8 @@ local function FormatValue(Value)
     end;
 end;
 
-local function SerializeTable(Table, Padding, Cache, StringRep)
-    local Count, Str, Num = 1, {}, CountTable(Table);
+SerializeTable = function(Table, Padding, Cache, StringRep)
+    local Count, Str, Num = 1, {}, #Table or CountTable(Table);
     local HasEntries = Num > 0;
 
     Cache, Padding, StringRep = Cache or {}, Padding or 1, StringRep or string.rep;
