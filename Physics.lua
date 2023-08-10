@@ -1,67 +1,82 @@
 local Module = {};
 
--- Checks If Number Is Close Enough To 0 To Be Considered 0 (For Our Purposes)
 local IsZero = function(Number)
-    local Epsilon = 1e-9; -- Definitely Small Enough (0.000000001)
-    return (Number > -Epsilon and Number < Epsilon);
+    local Epsilon = 1e-9; return (Number > -Epsilon and Number < Epsilon);
+end;
+local CubeRoot = function(Number)
+    return (Number >= 0) and Number ^ (1 / 3) or -((-Number) ^ (1 / 3));
 end;
 
--- Fixes An Issue With math.pow That Returns Nan When The Result Should Be A Real Number
-local CubeRoot = function(Number)
-    --return (Number > 0) and math.pow(Number, (1 / 3)) or -math.pow(math.abs(Number), (1 / 3));
-    return (Number > 0) and Number ^ (1 / 3) or -((-Number) ^ (1 / 3))
-end
+local SolveQuadric = function(A, B, C)
+    if IsZero(A) then
+        if IsZero(B) then
+            return nil;
+        else
+            return -C / B;
+        end;
+    end;
 
---[[
-    SolveQuadric(number a, number b, number c)
-    Returns Number x0, Number x1
-
-    Solves For The Roots Of A Quadratic Equation Of The Form:
-    ax^2 + bx + c = 0
-
-    Returns Nil If The Roots Do Not Exist
-    --Maybe Supports More Complex Stuff --Or Are Complex.
---]]
-local SolveQuadric = function(c0, c1, c2)
-    local s0, s1
-
-    local p, q, D
-
-    -- x^2 + px + q = 0
-    p = c1 / (2 * c0)
-    q = c2 / c0
-
-    D = p * p - q
+    local InvA = 1 / A;
+    local P = B * InvA / 2;
+    local Q = C * InvA;
+    local D = P * P - Q;
 
     if IsZero(D) then
-        s0 = -p
-        return s0
-    elseif (D < 0) then
-        local SqrtDiscriminant = math.sqrt(-D);
-        local RealPart = -c1 / (2 * c0);
-        local ImagPart = SqrtDiscriminant / (2 * c0);
-        s0 = {Real = RealPart, Imag = ImagPart};
-        s1 = {Real = RealPart, Imag = -ImagPart};
-        return s0, s1;
-        --return
-    else -- if (D > 0)
-        local sqrt_D = math.sqrt(D)
-        s0 = sqrt_D - p
-        s1 = -sqrt_D - p
-        return s0, s1
-    end
-end
+        return -P;
+    elseif D < 0 then
+        local SqrtD = math.sqrt(-D);
+        local RealPart = -P;
+        local ImagPart = SqrtD * InvA / 2;
+        return {Real = RealPart, Imag = ImagPart}, {Real = RealPart, Imag = -ImagPart};
+    else -- if D > 0
+        local SqrtD = math.sqrt(D);
+        return SqrtD - P, -SqrtD - P;
+    end;
+end;
 
---[[
-    solveCubic(number a, number b, number c, number d)
-    returns number s0, number s1, number s2
+local SolveCubic = function(A, B, C, D)
+    if A == 0 then
+        if B == 0 then
+            if C == 0 then
+                return nil;
+            else
+                return -D / C;
+            end
+        else
+            local Discriminant = C * C - 4 * B * D;
+            if IsZero(Discriminant) then
+                return -C / (2 * B);
+            elseif Discriminant < 0 then
+                return nil;
+            else
+                local SqrtD = math.sqrt(Discriminant);
+                return (-C + SqrtD) / (2 * B), (-C - SqrtD) / (2 * B);
+            end
+        end
+    else
+        B, C, D = B / A, C / A, D / A;
 
-    Will return nil for roots that do not exist.
+        local P = C - B * B/ 3;
+        local Q = (B * (2 * B * B - 9 * C) / 27 + D) / 2;
 
-    Solves for the roots of cubic polynomials of the following form:
-    ax^3 + bx^2 + cx + d = 0
---]]
-local SolveCubic = function(c0, c1, c2, c3)
+        local Discriminant = Q * Q + P * P * P / 27;
+        if IsZero(Discriminant) then
+            local U = CubeRoot(-Q);
+            return 2 * U - B / 3 * A, -U - B / 3 * A, -U - B / 3 * A;
+        elseif Discriminant < 0 then
+            local SqrtD = math.sqrt(-Discriminant);
+            local U = CubeRoot(math.sqrt((-Q * Q) / 27));
+            local V = math.atan2(SqrtD, -Q) / 3;
+            return 2 * U * math.cos(V) - B / 3 * A, -U * (math.cos(V) + math.sqrt(3) * math.sin(Y)) - B / 3 * A, -U * (math.cos(V) -math.sqrt(3) * math.sin(V)) - B / 3 * A;
+        else
+            local SqrtD = math.sqrt(Discriminant);
+            local U = CubeRoot(SqrtD - Q);
+            local V = CubeRoot(SqrtD + Q);
+            return U + V - B / 3 * A;
+        end;
+    end;
+end;
+--[[local SolveCubic = function(c0, c1, c2, c3)
     local s0, s1, s2
 
     local num, sub
@@ -123,18 +138,57 @@ local SolveCubic = function(c0, c1, c2, c3)
     if (num > 2) then s2 = s2 - sub end
 
     return s0, s1, s2
+end;]]
+
+local SolveQuartic = function(C0, C1, C2, C3, C4)
+    local Coeffs = {};
+    local A, B, C, D = C1 / C0, C2 / C0, C3 / C0, C4 / C0;
+
+    local P = -3 * A * A / 8 + B;
+    local Q = A * A * A / 8 - A * B / 2 + C
+    local R = -3 * A * A * A * A / 256 + A * A * B / 16 - A * C / 4 + D
+    local Results = {SolveCubic(1, 2 * P, P * P - 4 * R, -Q * Q)};
+    local U = Results[1];
+
+    local Res = {};
+    if not U then
+        return nil;
+    elseif IsZero(U) then
+        local V = math.sqrt(P * P - 4 * R);
+        local Temp = math.sqrt(-P + (12 * A * A - 4 * V) / U);
+        if Temp ~= nil then
+            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 - Temp / 2 - A / 4);
+            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 + Temp / 2 - A / 4);
+        end
+    elseif U > 0 then
+        local Y = math.sqrt(U);
+        local V = math.sqrt(P * P - 4 * R);
+        local Temp = math.sqrt(-P - (12 * A * A + 4 * V) / U);
+        if Temp ~= nil then
+            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 - Y / 2 - Temp / 2 - A / 4);
+            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 - Y / 2 + Temp / 2 - A / 4);
+        end;
+    else
+        return nil;
+    end;
+
+    for Index1 = 1, #Res do
+        local Z = Res[Index1];
+        Coeffs[3] = Z;
+        Coeffs[2] = P / 2 - Z * Z - Q / Z;
+        Coeffs[1] = Z - A / 4;
+        Coeffs[0] = 1;
+
+        local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
+        for Index2 = 1, #Results do
+            if IsZero(Results[Index2]) then Results[Index2] = 0; end;
+            table.insert(Res, Results[Index2]);
+        end;
+    end;
+
+    return unpack(Res);
 end;
-
---[[
-    solveQuartic(number a, number b, number c, number d, number e)
-    returns number s0, number s1, number s2, number s3
-
-    Will return nil for roots that do not exist.
-
-    Solves for the roots of quartic polynomials of the form:
-    ax^4 + bx^3 + cx^2 + dx + e = 0
---]]
-local SolveQuartic = function(c0, c1, c2, c3, c4)
+--[[local SolveQuartic = function(c0, c1, c2, c3, c4)
     local s0, s1, s2, s3
 
     local coeffs = {}
@@ -241,77 +295,82 @@ local SolveQuartic = function(c0, c1, c2, c3, c4)
     return s3, s2, s1, s0;
     --return s0, s1, s2, s3
     --return {s3, s2, s1, s0}
-end;
+end;]]
 
-function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravity, GravityCorrection)
-    Gravity = Gravity or workspace.Gravity;
-    GravityCorrection = GravityCorrection or 2;
+function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravity, GravityCorrection, Option)
+    Gravity, GravityCorrection = Gravity or workspace.Gravity, GravityCorrection or 2;
 
     local Disp = TPos - Origin;
+    local GCorrection = -(Gravity / GravityCorrection);
 
-    --local TargetX, TargetY, TargetZ = Disp.X, Disp.Y, Disp.Z;
-    --local InitialVelX, InitialVelY, InitialVelZ = TVelocity.X, TVelocity.Y, TVelocity.Z
-    local GCorrection = -(Gravity / GravityCorrection) -- gravity correction
+    if Option == 1 then
+        local T0, T1, T2, T3 = SolveQuartic(
+            GCorrection * GCorrection,
+            -GravityCorrection * TVelocity.Y * GCorrection,
+            TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
+            GravityCorrection * Disp.Y * TVelocity.Y + GCorrection * Disp.X * TVelocity.X + GravityCorrection * Disp.Z * TVelocity.Z,
+            Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
+        );
 
-    --[[local Solutions = SolveQuartic(
-        GCorrection * GCorrection,
-        -2 * InitialVelY * GCorrection,
-        InitialVelY * InitialVelY - 2 * TargetY * GCorrection - ProjectileSpeed * ProjectileSpeed + InitialVelX * InitialVelX + InitialVelZ * InitialVelZ,
-        2 * TargetY * InitialVelY + 2 * TargetX * InitialVelX + 2 * TargetZ * InitialVelZ,
-        TargetY * TargetY + TargetX * TargetX + TargetZ * TargetZ
-    );]]
-    local T0, T1, T2, T3 = SolveQuartic(
-        GCorrection * GCorrection,
-        -GravityCorrection * TVelocity.Y * GCorrection,
-        TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
-        GravityCorrection * Disp.Y * TVelocity.Y + GCorrection * Disp.X * TVelocity.X + GravityCorrection * Disp.Z * TVelocity.Z,
-        Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
-    );
+        --[[local T = nil;
+        if T0 and T0 > 0 then
+            T = T0;
+        elseif T1 and T1 > 0 then
+            T = T1;
+        elseif T2 and T2 > 0 then
+            T = T2;
+        elseif T3 and T3 > 0 then
+            T = T3;
+        end;]]
 
-    local T = nil;
-    if T0 and T0 > 0 then
-		T = T0;
-    elseif T1 and T1 > 0 then
-		T = T1;
-    elseif T2 and T2 > 0 then
-		T = T2;
-    elseif T3 and T3 > 0 then
-		T = T3;
+        local T = T0 or T1 or T2 or T3;
+        if T and T > 0 then return T; end;
+        if not T or T <= 0 then return Origin; end;
+
+        return Origin + Vector3.new(
+            (Disp.X + TVelocity.X * T) / T,
+            (Disp.Y + TVelocity.Y * T - GCorrection * T * T) / T,
+            (Disp.Z + TVelocity.Z * T) / T
+        );
     end;
 
-    if not T then return Origin; end;
-    return Origin + Vector3.new(
-        (Disp.X + TVelocity.X * T) / T,
-        (Disp.Y + TVelocity.Y * T - GCorrection * T * T) / T,
-        (Disp.Z + TVelocity.Z * T) / T
-    );
+    if Option == 2 then
+        local Solutions = SolveQuartic(
+            GCorrection * GCorrection,
+            -2 * TVelocity.Y * GCorrection,
+            TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
+            GravityCorrection * Disp.Y * TVelocity.Y + GravityCorrection * Disp.X * TVelocity.X + GravityCorrection * Disp.Z * TVelocity.Z,
+            Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
+        );
 
-    --[[if Solutions then
-        local PosRoots = table.create(2);
-        for Index = 1, #Solutions do --Filter Out The Negative Roots
-            local Solution = Solutions[Index];
-            if Solution > 0 then
-                table.insert(PosRoots, Solution);
+        if Solutions then
+            local PosRoots = table.create(2);
+            for Index = 1, #Solutions do --Filter Out The Negative Roots
+                local Solution = Solutions[Index];
+                if Solution > 0 then
+                    table.insert(PosRoots, Solution);
+                end;
+            end;
+
+            if PosRoots[1] then
+                local PR = PosRoots[1];
+                return Origin + Vector3.new(
+                    (Disp.X + TVelocity.X * PR) / PR,
+                    (Disp.Y + TVelocity.Y * PR - GCorrection * PR * PR) / PR,
+                    (Disp.Z + TVelocity.Z * PR) / PR
+                );
             end;
         end;
 
-        if PosRoots[1] then
-            local PR = PosRoots[1];
-            local X = (TargetX + InitialVelX * PR) / PR;
-            local Y = (TargetY + InitialVelY * PR - GCorrection * PR * PR) / PR;
-            local Z = (TargetZ + InitialVelZ * PR) / PR;
-            return Origin + Vector3.new(X, Y, Z);
-        end;
-    end;]]
-
-    --[[if Solutions and Solutions[1] > 0 then
-        local S1 = Solutions[1];
-        local X = (TargetX + InitialVelX * S1) / S1;
-        local Y = (TargetY + InitialVelY * S1 - GCorrection * S1 * S1) / S1;
-        local Z = (TargetZ + InitialVelZ * S1) / S1;
-
-        return Origin + Vector3.new(X, Y, Z);
-    end;]]
+        --[[if Solutions and Solutions[1] > 0 then
+            local S1 = Solutions[1];
+            return Origin + Vector3.new(
+                (Disp.X + TVelocity.X * S1) / S1, 
+                (Disp.Y + TVelocity.Y * S1 - GCorrection * S1 * S1) / S1, 
+                (Disp.Z + TVelocity.Z * S1) / S1
+            );
+        end;]]
+    end;
 end;
 
 return Module;
