@@ -25,6 +25,7 @@ local StringRet = function(Object, Typ)
 end;
 local function FormatValue(Value)
     local Typ = type(Value);
+
     local Handlers = {
         string = function() return '"' .. Value .. '"' end,
         Instance = function() return Value:GetFullName() end,
@@ -44,30 +45,31 @@ local function FormatValue(Value)
         end,
         BrickColor = function() return ("BrickColor.new(%d)"):format(Value.Number) end,
         Ray = function() return ("Ray.new(%s, %s)"):format(FormatValue(Value.Origin), FormatValue(Value.Direction)) end,
-        Enum = function() return ("%s.%s"):format(Value.EnumType.Name, Value.Name) end,
-        EnumItem = function() return ("%s.%s"):format(Value.EnumType.Name, Value.Name) end,
-        TweenInfo = function()
-            if typeof(Value.EasingStyle) == "EnumItem" and typeof(Value.EasingDirection) == "EnumItem" then
-                local Fields = {
-                    ("Time = %f"):format(Value.Time),
-                    ("EasingStyle = Enum.EasingStyle.%s"):format(Value.EasingStyle.Name),
-                    ("EasingDirection = Enum.EasingDirection.%s"):format(Value.EasingDirection.Name)
-                };
-                return ("TweenInfo.new(%s)"):format(table.concat(Fields, ", "));
-            else
-                return "TweenInfo.new()";
-            end;
-        end,
-        Random = function() return ("Random.new(%d)"):format(Value.Seed) end,
-        Axes = function()
-            local AxesTable = {}; for _, Axis in ipairs(Enum.Axis:GetEnumItems()) do if Value[Axis.Name] then table.insert(AxesTable, ("Enum.Axis.%s"):format(Axis.Name)); end; end;
-            return ("Axes.new(%s)"):format(table.concat(AxesTable, ", "));
-        end,
-        Faces = function()
-            local FacesTable = {}; for _, Face in ipairs(Enum.NormalId:GetEnumItems()) do if Value[Face.Name] then table.insert(FacesTable, ("Enum.NormalId.%s"):format(Face.Name)); end; end;
-            return ("Faces.new(%s)"):format(table.concat(FacesTable, ", "));
-        end,
     };
+
+    Handlers.Enum = function() return ("%s.%s"):format(Value.EnumType.Name, Value.Name) end;
+    Handlers.EnumItem = function() return ("%s.%s"):format(Value.EnumType.Name, Value.Name) end;
+    Handlers.TweenInfo = function()
+        if typeof(Value.EasingStyle) == "EnumItem" and typeof(Value.EasingDirection) == "EnumItem" then
+            local Fields = {
+                ("Time = %f"):format(Value.Time),
+                ("EasingStyle = Enum.EasingStyle.%s"):format(Value.EasingStyle.Name),
+                ("EasingDirection = Enum.EasingDirection.%s"):format(Value.EasingDirection.Name)
+            };
+            return ("TweenInfo.new(%s)"):format(table.concat(Fields, ", "));
+        else
+            return "TweenInfo.new()";
+        end;
+    end;
+    Handlers.Random = function() return ("Random.new(%d)"):format(Value.Seed) end;
+    Handlers.Axes = function()
+        local AxesTable = {}; for _, Axis in ipairs(Enum.Axis:GetEnumItems()) do if Value[Axis.Name] then table.insert(AxesTable, ("Enum.Axis.%s"):format(Axis.Name)); end; end;
+        return ("Axes.new(%s)"):format(table.concat(AxesTable, ", "));
+    end;
+    Handlers.Faces = function()
+        local FacesTable = {}; for _, Face in ipairs(Enum.NormalId:GetEnumItems()) do if Value[Face.Name] then table.insert(FacesTable, ("Enum.NormalId.%s"):format(Face.Name)); end; end;
+        return ("Faces.new(%s)"):format(table.concat(FacesTable, ", "));
+    end;
 
     if StrTypes[Typ] then
         return StringRet(Value, Typ);
@@ -77,9 +79,9 @@ local function FormatValue(Value)
         return Handlers.Enum();
     else
         --return ("%q"):format(tostring(Value));
-        ("%s.new(%s)"):format(Typ, tostring(Value));
+        return ("%s.new(%s)"):format(Typ, tostring(Value));
     end;
-end;
+end
 
 SerializeTable = function(Table, Padding, Cache, StringRep)
     local Count, Str, Num = 1, {}, #Table or CountTable(Table);
