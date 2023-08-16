@@ -94,8 +94,13 @@ SerializeTable = function(Table, Padding, Cache, StringRep)
     Cache[Table] = {Table, 0};
 
     for Index, Value in next, Table do
+        local IndexCache, ValueCache = Cache[Index] or {}, Cache[Value] or {};
+        Cache[Index], Cache[Value] = IndexCache, ValueCache;
+
         local IsIndexTable, IsValueTable = Type(Index) == "table", Type(Value) == "table";
-        Cache[Index], Cache[Value] = Cache[Index] or IsIndexTable and {Index, Padding}, Cache[Value] or IsValueTable and {Value, Padding};
+        IndexCache[1], IndexCache[2] = Index, IsIndexTable and Padding;
+        ValueCache[1], ValueCache[2] = Value, IsValueTable and Padding;
+
         Str[Count] = ("%s[%s] = %s%s"):format(StringRep("    ", Padding), LocalizedFormat(Index, IsIndexTable), LocalizedFormat(Value, IsValueTable), Count < Num and "," or "");
         Count = Count + 1;
     end;
