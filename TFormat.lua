@@ -38,30 +38,25 @@ local function FormatValue(Value)
 end;
 
 SerializeTable = function(Table, Padding, Cache, StringRep)
-    local Count, Str, Num = 1, {}, #Table or CountTable(Table);
+    local Str, Count, Num = "", 1, CountTable(Table) or #Table;
     local HasEntries = Num > 0;
 
     Cache, Padding, StringRep = Cache or {}, Padding or 1, StringRep or string.rep;
 
-    local LocalizedFormat = function(Value, IsTable)
+    local function LocalizedFormat(Value, IsTable)
         return IsTable and (Cache[Value][2] >= Padding) and SerializeTable(Value, Padding + 1, Cache, StringRep) or FormatValue(Value);
     end;
 
     Cache[Table] = {Table, 0};
 
     for Index, Value in next, Table do
-        local IndexCache, ValueCache = Cache[Index] or {}, Cache[Value] or {};
-        Cache[Index], Cache[Value] = IndexCache, ValueCache;
-
-        local IsIndexTable, IsValueTable = Type(Index) == "table", Type(Value) == "table";
-        IndexCache[1], IndexCache[2] = Index, IsIndexTable and Padding;
-        ValueCache[1], ValueCache[2] = Value, IsValueTable and Padding;
-
-        Str[Count] = ("%s[%s] = %s%s"):format(StringRep("    ", Padding), LocalizedFormat(Index, IsIndexTable), LocalizedFormat(Value, IsValueTable), Count < Num and "," or "");
+        local TypeIndex, TypeValue = Type(Index) == "table", Type(Value) == "table";
+        Cache[Index], Cache[Value] = (not Cache[Index] and TypeIndex) and {Index, Padding} or Cache[Index], (not Cache[Value] and TypeValue) and {Value, Padding} or Cache[Value]
+        Str = ("%s%s[%s] = %s%s\n"):format(Str, StringRep("    ", Padding), LocalizedFormat(Index, TypeIndex), LocalizedFormat(Value, TypeValue), (Count < Num and "," or ""))
         Count = Count + 1;
     end;
 
-    return ("{%s\n%s%s}"):format(HasEntries and "\n" or "", table.concat(Str, "\n"), HasEntries and StringRep("    ", Padding - 1) or "");
+    return ("{" .. (HasEntries and "\n" or "")) .. Str .. (HasEntries and StringRep("    ", Padding - 1) or "") .. "}";
 end;
 
 return SerializeTable;
