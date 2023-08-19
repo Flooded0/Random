@@ -298,7 +298,7 @@ end;
 end;]]
 
 function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravity, GravityCorrection, Option)
-    Gravity, GravityCorrection, Option = Gravity or workspace.Gravity, GravityCorrection or 2, Option or 1;
+    Gravity, GravityCorrection = Gravity or workspace.Gravity, GravityCorrection or 2;
 
     local Disp = TPos - Origin;
     local GCorrection = -(Gravity / GravityCorrection);
@@ -335,7 +335,7 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravit
     end;
 
     if Option == 2 then
-        local Sol1, Sol2 = SolveQuartic(
+        local Solutions = SolveQuartic(
             GCorrection * GCorrection,
             -2 * TVelocity.Y * GCorrection,
             TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
@@ -343,21 +343,33 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravit
             Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
         );
 
-        if Sol1 and Sol1 > 0 then
-            local PR = Sol1;
-            return Origin + Vector3.new(
-                (Disp.X + TVelocity.X * PR) / PR,
-                (Disp.Y + TVelocity.Y * PR - GCorrection * PR * PR) / PR,
-                (Disp.Z + TVelocity.Z * PR) / PR
-            );
-        elseif Sol2 and Sol2 > 0 then
-            local PR = Sol2;
-            return Origin + Vector3.new(
-                (Disp.X + TVelocity.X * PR) / PR,
-                (Disp.Y + TVelocity.Y * PR - GCorrection * PR * PR) / PR,
-                (Disp.Z + TVelocity.Z * PR) / PR
-            );
+        if Solutions then
+            local PosRoots = table.create(2);
+            for Index = 1, #Solutions do --Filter Out The Negative Roots
+                local Solution = Solutions[Index];
+                if Solution > 0 then
+                    table.insert(PosRoots, Solution);
+                end;
+            end;
+
+            if PosRoots[1] then
+                local PR = PosRoots[1];
+                return Origin + Vector3.new(
+                    (Disp.X + TVelocity.X * PR) / PR,
+                    (Disp.Y + TVelocity.Y * PR - GCorrection * PR * PR) / PR,
+                    (Disp.Z + TVelocity.Z * PR) / PR
+                );
+            end;
         end;
+
+        --[[if Solutions and Solutions[1] > 0 then
+            local S1 = Solutions[1];
+            return Origin + Vector3.new(
+                (Disp.X + TVelocity.X * S1) / S1, 
+                (Disp.Y + TVelocity.Y * S1 - GCorrection * S1 * S1) / S1, 
+                (Disp.Z + TVelocity.Z * S1) / S1
+            );
+        end;]]
     end;
 end;
 
