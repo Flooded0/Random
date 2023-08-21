@@ -26,7 +26,8 @@ local function FormatValue(Value)
         boolean = function(Val) return Val and "true" or "false"; end,
         Instance = function(Val) return Val:GetFullName(); end,
         BrickColor = function(Val) return ("BrickColor.new(%d)"):format(Val.Number); end,
-        CFrame = function(Val) return ("CFrame.new(%s)"):format(table.concat({Val:GetComponents()}, ", ")); end,
+        --CFrame = function(Val) return ("CFrame.new(%s)"):format(table.concat({Val:GetComponents()}, ", ")); end,
+        CFrame = function(Val) local Components = {Val:components()} local Translation, Rotation = Components[1], Components[2]; return ("CFrame.new(%s, %s)"):format(tostring(Translation), tostring(Rotation)) end,
         Color3 = function(Val) return ("Color3.fromRGB(%d, %d, %d)"):format(Val.R * 255, Val.G * 255, Val.B * 255); end,
         Vector2 = function(Val) return ("Vector2.new(%s, %s)"):format(Val.X, Val.Y); end,
         Vector2int16 = function(Val) return ("Vector2int16.new(%d, %d)"):format(Val.X, Val.Y); end,
@@ -40,8 +41,8 @@ local function FormatValue(Value)
         Rect = function(Val) return ("Rect.new(%s, %s, %s, %s)"):format(Val.Min.X, Val.Min.Y, Val.Max.X, Val.Max.Y); end,
         Random = function(Val) return ("Random.new(%d)"):format(Val.Seed); end;
         Ray = function(Val) return ("Ray.new(%s, %s)"):format(FormatValue(Val.Origin), FormatValue(Val.Direction)); end,
-        Enum = function(Val) return ("%s.%s"):format(Val.EnumType.Name, Val.Name); end;
-        EnumItem = function(Val) return ("%s.%s"):format(Val.EnumType.Name, Val.Name); end;
+        Enum = function(Val) return ("%s.%s"):format(tostring(Val.EnumType), tostring(Val)); end;
+        EnumItem = function(Val) return ("%s.%s"):format(tostring(Val.EnumType), tostring(Val)); end;
         RBXScriptConnection = function() return "<RBXScriptConnection>"; end,
         RBXScriptSignal = function() return "<RBXScriptSignal>"; end,
         Axes = function(Val)
