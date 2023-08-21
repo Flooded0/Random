@@ -28,7 +28,6 @@ local function FormatValue(Value)
         BrickColor = function(Val) return ("BrickColor.new(%d)"):format(Val.Number); end,
         --CFrame = function(Val) return ("CFrame.new(%s)"):format(table.concat({Val:GetComponents()}, ", ")); end,
         --CFrame = function(Val) local Components = {Val:components()} local Translation, Rotation = Components[1], Components[2]; return ("CFrame.new(%s, %s)"):format(tostring(Translation), tostring(Rotation)) end,
-        Color3 = function(Val) return ("Color3.fromRGB(%d, %d, %d)"):format(Val.R * 255, Val.G * 255, Val.B * 255); end,
         Vector2 = function(Val) return ("Vector2.new(%s, %s)"):format(Val.X, Val.Y); end,
         Vector2int16 = function(Val) return ("Vector2int16.new(%d, %d)"):format(Val.X, Val.Y); end,
         Vector3 = function(Val) return ("Vector3.new(%s, %s, %s)"):format(Val.X, Val.Y, Val.Z); end,
