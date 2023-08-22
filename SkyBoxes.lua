@@ -13,20 +13,6 @@ return {
         ["SkyboxRt"] = "",
         ["SkyboxUp"] = ""
     },
-    ["None"] = {
-        ["CelestialBodiesShown"] = false,
-        ["StarCount"] = 0,
-        ["MoonAngularSize"] = 0,
-        ["MoonTextureId"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SunAngularSize"] = 0,
-        ["SunTextureId"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SkyboxBk"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SkyboxDn"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SkyboxFt"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SkyboxLf"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SkyboxRt"] = "http://www.roblox.com/asset/?id=2675785344",
-        ["SkyboxUp"] = "http://www.roblox.com/asset/?id=2675785344"
-    },
     ["Galaxy"] = {
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=159454299",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=159454296",
