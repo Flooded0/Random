@@ -1,18 +1,4 @@
 return {
-    ["Default"] = {
-        ["CelestialBodiesShown"] = false,
-        ["StarCount"] = 0,
-        ["MoonAngularSize"] = 0,
-        ["MoonTextureId"] = "",
-        ["SunAngularSize"] = 0,
-        ["SunTextureId"] = "",
-        ["SkyboxBk"] = "",
-        ["SkyboxDn"] = "",
-        ["SkyboxFt"] = "",
-        ["SkyboxLf"] = "",
-        ["SkyboxRt"] = "",
-        ["SkyboxUp"] = ""
-    },
     ["Galaxy"] = {
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=159454299",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=159454296",
