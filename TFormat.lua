@@ -3,7 +3,7 @@ local RawEqual = rawequal or function(A, B) return A == B; end;
 local CountTable = function(Table) local Count = 0; for _, _ in next, Table do Count = Count + 1; end; return Count; end;
 local StringRet = function(Object, Typ)
     local Ret, MetaTable, OldFunc;
-    if Typ == "function" then return tostring(Object) .. debug.getinfo(Object).name; end;
+    if Typ == "function" then return tostring(Object) .. (debug.getinfo or getinfo)(Object).name; end;
     if Typ ~= "table" then return tostring(Object); end;
 
     MetaTable = (getrawmetatable or debug.getmetatable or getmetatable)(Object);
