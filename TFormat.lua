@@ -1,9 +1,10 @@
-local Type, StrTypes = typeof or type, {["boolean"] = true, ["table"] = true, ["userdata"] = true, ["function"] = true, ["number"] = true};
+local Type, StrTypes = typeof or type, {["boolean"] = true, ["table"] = true, ["function"] = true, ["userdata"] = true, ["number"] = true};
 local RawEqual = rawequal or function(A, B) return A == B; end;
 local CountTable = function(Table) local Count = 0; for _, _ in next, Table do Count = Count + 1; end; return Count; end;
 local StringRet = function(Object, Typ)
     local Ret, MetaTable, OldFunc;
-    if not (Typ == "table") then return tostring(Object); end;
+    if Typ == "function" then return tostring(Object) .. debug.getinfo(Object).name; end;
+    if Typ ~= "table" then return tostring(Object); end;
 
     MetaTable = (getrawmetatable or debug.getmetatable or getmetatable)(Object);
     if not MetaTable then return tostring(Object); end;
@@ -23,7 +24,7 @@ local function FormatValue(Value)
             if Val == math.huge then return "math.huge"; elseif Val == -math.huge then return "-math.huge"; end;
             return tonumber(Val);
         end,
-        boolean = function(Val) return Val and "true" or "false"; end,
+        boolean = function(Val) return tostring(Val) end,
         Instance = function(Val) return Val:GetFullName(); end,
         BrickColor = function(Val) return ("BrickColor.new(%d)"):format(Val.Number); end,
         --CFrame = function(Val) return ("CFrame.new(%s)"):format(table.concat({Val:GetComponents()}, ", ")); end,
@@ -70,7 +71,7 @@ local function FormatValue(Value)
     if StrTypes[TypOf] then
         return StringRet(Value, TypOf);
     else
-        local FormatFunction = FormatTable[TypOf] or FormatTable.Default
+        local FormatFunction = FormatTable[TypOf] or FormatTable.Default;
         return FormatFunction(Value, TypOf);
     end;
 end;
