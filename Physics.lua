@@ -66,7 +66,7 @@ local SolveCubic = function(A, B, C, D)
         elseif Discriminant < 0 then
             local SqrtD = math.sqrt(-Discriminant);
             local U = CubeRoot(math.sqrt((-Q * Q) / 27));
-            local V = math.atan2(SqrtD, -Q) / 3;
+            local V = math.atan(SqrtD, -Q) / 3;
             return 2 * U * math.cos(V) - B / 3 * A, -U * (math.cos(V) + math.sqrt(3) * math.sin(Y)) - B / 3 * A, -U * (math.cos(V) -math.sqrt(3) * math.sin(V)) - B / 3 * A;
         else
             local SqrtD = math.sqrt(Discriminant);
@@ -344,7 +344,7 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravit
         );
 
         if Solutions then
-            local PosRoots = table.create(2);
+            local PosRoots = {};
             for Index = 1, #Solutions do --Filter Out The Negative Roots
                 local Solution = Solutions[Index];
                 if Solution > 0 then
