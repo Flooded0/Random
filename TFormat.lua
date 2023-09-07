@@ -16,7 +16,7 @@ local StringRet = function(Object, Typ, DumpFC)
         return tostring(Object)
     end;
 
-    MetaTable = (getrawmetatable or debug.getmetatable or getmetatable)(Object);
+    MetaTable = (debug.getrawmetatable or getrawmetatable)(Object);
     if not MetaTable then return tostring(Object); end;
 
     OldFunc = rawget(MetaTable, "__tostring");

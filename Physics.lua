@@ -67,7 +67,7 @@ local SolveCubic = function(A, B, C, D)
             local SqrtD = math.sqrt(-Discriminant);
             local U = CubeRoot(math.sqrt((-Q * Q) / 27));
             local V = math.atan(SqrtD, -Q) / 3;
-            return 2 * U * math.cos(V) - B / 3 * A, -U * (math.cos(V) + math.sqrt(3) * math.sin(Y)) - B / 3 * A, -U * (math.cos(V) -math.sqrt(3) * math.sin(V)) - B / 3 * A;
+            return 2 * U * math.cos(V) - B / 3 * A, -U * (math.cos(V) + math.sqrt(3) * math.sin(V)) - B / 3 * A, -U * (math.cos(V) -math.sqrt(3) * math.sin(V)) - B / 3 * A;
         else
             local SqrtD = math.sqrt(Discriminant);
             local U = CubeRoot(SqrtD - Q);

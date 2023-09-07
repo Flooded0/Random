@@ -1,3 +1,5 @@
+--{"Blood", "Pk", "Food", "Gadgets", "Car", "Base", "---Ran ^", "SpecOps", "GusArmor", "KethArmor", "---Clothes ^", "Mk48=1", "M249=1", "MP5=1", "Fedorov=1", "PP19=1", "PPSH=1", "---1-Pvp ^", "Mk48=2", "M249=2", "MP5=2", "Fedorov=2", "PP19=2", "PPSH=2", "---2-Normal ^", "M14=1", "FAL=1", "Mk17=1", "HK21=1", "HK417=1", "G3=1", "---3-Pvp ^", "M14=2", "FAL=2", "Mk17=2", "HK21=2", "HK417=2", "G3=2", "---4-Normal ^", "Pat=1", "G36k=1", "M4A1=1", "SCAR=1", "---5-Pvp ^", "Pat=2", "G36k=2", "M4A1=2", "SCAR=2", "---6-Normal ^", "Ak12=1", "AK104=1", "OTs14=1", "AK47=1", "RPK=1", "AKM=1", "---7-Pvp ^", "Ak12=2", "AK104=2", "OTs14=2", "AK47=2", "RPK=2", "AKM=2", "---8-Normal ^"}
+
 return {
     --[ Ran
     ["Blood"] = {{"BloodBag", 50}},
