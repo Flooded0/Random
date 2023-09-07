@@ -1,10 +1,20 @@
-local Type, StrTypes = typeof or type, {["boolean"] = true, ["table"] = true, ["function"] = true, ["userdata"] = true, ["number"] = true};
+local Type, StrTypes = typeof or type, {["boolean"] = true, ["table"] = true, ["function"] = true, ["userdata"] = true, ["number"] = true, ["nil"] = true};
 local RawEqual = rawequal or function(A, B) return A == B; end;
 local CountTable = function(Table) local Count = 0; for _, _ in next, Table do Count = Count + 1; end; return Count; end;
-local StringRet = function(Object, Typ)
+local StringRet = function(Object, Typ, DumpFC)
     local Ret, MetaTable, OldFunc;
-    if Typ == "function" then return tostring(Object) .. " : " .. (debug.getinfo or getinfo)(Object).name; end;
-    if Typ ~= "table" then return tostring(Object); end;
+    --if Typ ~= "table" then return Typ == "function" and tostring(Object) .. "--[[" .. ()(Object) .. "]]" or tostring(Object); end;
+    if Typ ~= "table" then
+        if DumpFC and Typ == "function" then
+            local AB = {};
+            for A, B in next, (debug.getconstants or getconstants)(Object) do
+                table.insert(AB, tostring(A) .. ": " .. tostring(B));
+            end;
+
+            return tostring(Object) .. " --[[" .. table.concat(AB, ", ") .. "]]" or tostring(Object);
+        end;
+        return tostring(Object)
+    end;
 
     MetaTable = (getrawmetatable or debug.getmetatable or getmetatable)(Object);
     if not MetaTable then return tostring(Object); end;
@@ -16,14 +26,11 @@ local StringRet = function(Object, Typ)
     return Ret;
 end;
 
-local function FormatValue(Value)
+local function FormatValue(Value, DumpFC)
     local TypOf = Type(Value);
     local FormatTable = {
         string = function(Val) return '"' .. Val .. '"' end,
-        number = function(Val)
-            if Val == math.huge then return "math.huge"; elseif Val == -math.huge then return "-math.huge"; end;
-            return tonumber(Val);
-        end,
+        number = function(Val) if Val == math.huge then return "math.huge"; elseif Val == -math.huge then return "-math.huge"; elseif Val ~= Val then return "NaN"; end; return tonumber(Val); end,
         boolean = function(Val) return tostring(Val) end,
         Instance = function(Val) return Val:GetFullName(); end,
         BrickColor = function(Val) return ("BrickColor.new(%d)"):format(Val.Number); end,
@@ -69,14 +76,14 @@ local function FormatValue(Value)
     };
 
     if StrTypes[TypOf] then
-        return StringRet(Value, TypOf);
+        return StringRet(Value, TypOf, DumpFC);
     else
         local FormatFunction = FormatTable[TypOf] or FormatTable.Default;
         return FormatFunction(Value, TypOf);
     end;
 end;
 
-SerializeTable = function(Table, Padding, Cache, StringRep, ConcatTable, MaxDepth)
+SerializeTable = function(Table, Padding, Cache, StringRep, ConcatTable, MaxDepth, DumpFC)
     local Str, Count, Num = "", 1, #Table or CountTable(Table);
     local HasEntries = Count > 0;
 
@@ -85,7 +92,7 @@ SerializeTable = function(Table, Padding, Cache, StringRep, ConcatTable, MaxDept
 
     local function LocalizedFormat(Value, IsTable, Depth)
         if Depth >= MaxDepth then return tostring(Value); end;
-        return IsTable and (Cache[Value][2] >= Padding) and SerializeTable(Value, Padding + 1, Cache, StringRep, ConcatTable) or FormatValue(Value);
+        return IsTable and (Cache[Value][2] >= Padding) and SerializeTable(Value, Padding + 1, Cache, StringRep, ConcatTable) or FormatValue(Value, DumpFC);
     end;
 
     Cache[Table] = {Table, 0};
