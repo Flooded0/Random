@@ -297,14 +297,14 @@ end;
     --return {s3, s2, s1, s0}
 end;]]
 
-function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravity, GravityCorrection, Option)
-    Gravity, GravityCorrection = Gravity or workspace.Gravity, GravityCorrection or 2;
+function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
+    Gravity, GravityCorrection = ProjectileGravity or workspace.Gravity, GravityCorrection or 2;
 
-    local Disp = TPos - Origin;
+    local Disp = (TPos - Origin);
     local GCorrection = -(Gravity / GravityCorrection);
 
     if Option == 1 then
-        local T0, T1, T2, T3 = SolveQuartic(
+        local Tof = SolveQuartic(
             GCorrection * GCorrection,
             -GravityCorrection * TVelocity.Y * GCorrection,
             TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
@@ -312,32 +312,18 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravit
             Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
         );
 
-        --[[local T = nil;
-        if T0 and T0 > 0 then
-            T = T0;
-        elseif T1 and T1 > 0 then
-            T = T1;
-        elseif T2 and T2 > 0 then
-            T = T2;
-        elseif T3 and T3 > 0 then
-            T = T3;
-        end;]]
-
-        local T = T0 or T1 or T2 or T3;
-        if T and T > 0 then return T; end;
-        if not T or T <= 0 then return Origin; end;
-
-        return Origin + Vector3.new(
-            (Disp.X + TVelocity.X * T) / T,
-            (Disp.Y + TVelocity.Y * T - GCorrection * T * T) / T,
-            (Disp.Z + TVelocity.Z * T) / T
-        );
-    end;
-
-    if Option == 2 then
+        if Tof <= 0 then return Origin; end;
+        if Tof and Tof > 0 then
+            return Origin + Vector3.new(
+                (Disp.X + TVelocity.X * Tof) / Tof,
+                (Disp.Y + TVelocity.Y * Tof - GCorrection * Tof * Tof) / Tof,
+                (Disp.Z + TVelocity.Z * Tof) / Tof
+            );
+        end;
+    elseif Option == 2 then
         local Solutions = SolveQuartic(
             GCorrection * GCorrection,
-            -2 * TVelocity.Y * GCorrection,
+            -GravityCorrection * TVelocity.Y * GCorrection,
             TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
             GravityCorrection * Disp.Y * TVelocity.Y + GravityCorrection * Disp.X * TVelocity.X + GravityCorrection * Disp.Z * TVelocity.Z,
             Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
@@ -345,7 +331,7 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravit
 
         if Solutions then
             local PosRoots = {};
-            for Index = 1, #Solutions do --Filter Out The Negative Roots
+            for Index = 1, #Solutions do -- Filter Out The Negative Roots
                 local Solution = Solutions[Index];
                 if Solution > 0 then
                     table.insert(PosRoots, Solution);
@@ -361,15 +347,6 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Gravit
                 );
             end;
         end;
-
-        --[[if Solutions and Solutions[1] > 0 then
-            local S1 = Solutions[1];
-            return Origin + Vector3.new(
-                (Disp.X + TVelocity.X * S1) / S1, 
-                (Disp.Y + TVelocity.Y * S1 - GCorrection * S1 * S1) / S1, 
-                (Disp.Z + TVelocity.Z * S1) / S1
-            );
-        end;]]
     end;
 end;
 
