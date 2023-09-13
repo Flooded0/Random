@@ -33,7 +33,7 @@ local SolveQuadric = function(A, B, C)
     end;
 end;
 
-local SolveCubic = function(A, B, C, D)
+--[[local SolveCubic = function(A, B, C, D)
     local Discriminant, CoefficientA, CoefficientB, CoefficientC;
 
     CoefficientA, CoefficientB, CoefficientC= B / A, C / A, D / A;
@@ -61,8 +61,8 @@ local SolveCubic = function(A, B, C, D)
         local V = -CubeRoot(SqrtD + Q);
         return U + V - (1 / 3) * CoefficientA;
     end;
-end;
---[[local function SolveCubic(c0, c1, c2, c3)
+end;]]
+local function SolveCubic(c0, c1, c2, c3)
 	local s0, s1, s2
 
 	local num, sub
@@ -124,84 +124,9 @@ end;
 	if (num > 2) then s2 = s2 - sub end
 
 	return s0, s1, s2
-end]]
+end
 
-local SolveQuartic = function(C0, C1, C2, C3, C4)
-    local S0, S1, S2, S3;
-    local Coeffs = {};
-    local Z, U, V, Sub, Num, SQ_A, P, Q, R;
-
-    local A, B, C, D = C1 / C0, C2 / C0, C3 / C0, C4 / C0;
-
-    SQ_A = A * A;
-    P = -0.375 * SQ_A + B;
-    Q = 0.125 * SQ_A * A - 0.5 * A * B + C;
-    R = -(3 / 256) * SQ_A * SQ_A + 0.0625 * SQ_A * B - 0.25 * A * C + D;
-
-    if IsZero(R) then
-        Coeffs[3], Coeffs[2], Coeffs[1], Coeffs[0]  = Q, P, 0, 1;
-
-        local Results = {SolveCubic(Coeffs[0], Coeffs[1], Coeffs[2], Coeffs[3])}
-        Num = #Results
-        S0, S1, S2 = Results[1], Results[2], Results[3]
-    else
-        Coeffs[3], Coeffs[2], Coeffs[1], Coeffs[0]  = 0.5 * R * P - 0.125 * Q * Q, -R, -0.5 * P, 1;
-
-        S0, S1, S2 = SolveCubic(Coeffs[0], Coeffs[1], Coeffs[2], Coeffs[3]);
-        Z = S0;
-        U = Z * Z - R;
-        V = 2 * Z - P;
-
-        if IsZero(U) then U = 0;
-        elseif (U > 0) then U = math.sqrt(U);
-        else return;
-        end;
-
-        if IsZero(V) then V = 0;
-        elseif (V > 0) then V = math.sqrt(V);
-        else return;
-        end;
-
-        Coeffs[2], Coeffs[1], Coeffs[0] = Z - U, Q < 0 and -V or V, 1;
-
-        do
-            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
-            Num = #Results;
-            S0, S1 = Results[1], Results[2];
-        end;
-
-        Coeffs[2], Coeffs[1], Coeffs[0] = Z + U, Q < 0 and V or -V, 1;
-
-        if (Num == 0) then
-            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
-            Num = Num + #Results;
-            S0, S1 = Results[1], Results[2];
-        end;
-
-        if (Num == 1) then
-            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
-            Num = Num + #Results;
-            S1, S2 = Results[1], Results[2];
-        end;
-
-        if (Num == 2) then
-            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
-            Num = Num + #Results;
-            S2, S3 = Results[1], Results[2];
-        end;
-    end;
-
-    Sub = 0.25 * A;
-
-    --print("Num:", Num);
-    if (Num > 0) then S0 = C0 * (S0 - Sub); end;
-    if (Num > 1) then S1 = C0 * (S1 - Sub); end;
-    if (Num > 2) then S2 = C0 * (S2 - Sub); end;
-    if (Num > 3) then S3 = C0 * (S3 - Sub); end;
-
-    return S3, S2, S1, S0;
-end;
---[[local function SolveQuartic(c0, c1, c2, c3, c4)
+local function SolveQuartic(c0, c1, c2, c3, c4)
 	local s0, s1, s2, s3
 
 	local coeffs = {}
@@ -308,7 +233,7 @@ end;
 	return s3, s2, s1, s0
 	--return s0, s1, s2, s3
 	--return {s3, s2, s1, s0}
-end]]
+end;
 
 function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
 	Gravity, GravityCorrection, Option = ProjectileGravity or workspace.Gravity, GravityCorrection or 2, Option or 1;
