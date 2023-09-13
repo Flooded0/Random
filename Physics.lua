@@ -4,7 +4,8 @@ local IsZero = function(Number)
     local Epsilon = 1e-9; return (Number > -Epsilon and Number < Epsilon);
 end;
 local CubeRoot = function(Number)
-    return (Number >= 0) and Number ^ (1 / 3) or -((-Number) ^ (1 / 3));
+    local AbsX = math.abs(Number);
+    return (Number > 0) and math.pow(AbsX, (1 / 3)) or -math.pow(AbsX, (1 / 3));
 end;
 
 local SolveQuadric = function(A, B, C)
@@ -25,9 +26,7 @@ local SolveQuadric = function(A, B, C)
         return -P;
     elseif D < 0 then
         local SqrtD = math.sqrt(-D);
-        local RealPart = -P;
-        local ImagPart = SqrtD * InvA / 2;
-        return {Real = RealPart, Imag = ImagPart}, {Real = RealPart, Imag = -ImagPart};
+        return {Real = -P, Imag = SqrtD * InvA / 2}, {Real = -P, Imag = -SqrtD * InvA / 2};
     else -- if D > 0
         local SqrtD = math.sqrt(D);
         return SqrtD - P, -SqrtD - P;
@@ -35,280 +34,294 @@ local SolveQuadric = function(A, B, C)
 end;
 
 local SolveCubic = function(A, B, C, D)
-    if A == 0 then
-        if B == 0 then
-            if C == 0 then
-                return nil;
-            else
-                return -D / C;
-            end
-        else
-            local Discriminant = C * C - 4 * B * D;
-            if IsZero(Discriminant) then
-                return -C / (2 * B);
-            elseif Discriminant < 0 then
-                return nil;
-            else
-                local SqrtD = math.sqrt(Discriminant);
-                return (-C + SqrtD) / (2 * B), (-C - SqrtD) / (2 * B);
-            end
-        end
-    else
-        B, C, D = B / A, C / A, D / A;
+    local Discriminant, CoefficientA, CoefficientB, CoefficientC;
 
-        local P = C - B * B/ 3;
-        local Q = (B * (2 * B * B - 9 * C) / 27 + D) / 2;
+    CoefficientA, CoefficientB, CoefficientC= B / A, C / A, D / A;
 
-        local Discriminant = Q * Q + P * P * P / 27;
-        if IsZero(Discriminant) then
-            local U = CubeRoot(-Q);
-            return 2 * U - B / 3 * A, -U - B / 3 * A, -U - B / 3 * A;
-        elseif Discriminant < 0 then
-            local SqrtD = math.sqrt(-Discriminant);
-            local U = CubeRoot(math.sqrt((-Q * Q) / 27));
-            local V = math.atan(SqrtD, -Q) / 3;
-            return 2 * U * math.cos(V) - B / 3 * A, -U * (math.cos(V) + math.sqrt(3) * math.sin(V)) - B / 3 * A, -U * (math.cos(V) -math.sqrt(3) * math.sin(V)) - B / 3 * A;
+    local P = (-(1 / 3) * (CoefficientA * CoefficientA) + CoefficientB) / 3;
+    local Q = ((2 / 27) * (CoefficientA * CoefficientA * CoefficientA) - (1 / 3) * (CoefficientA * CoefficientB) + CoefficientC) / 2;
+
+    local CB_P = P * P * P;
+    Discriminant = Q * Q + CB_P;
+
+    if IsZero(Discriminant) then
+        if IsZero(Q) then
+            return 0;
         else
-            local SqrtD = math.sqrt(Discriminant);
-            local U = CubeRoot(SqrtD - Q);
-            local V = CubeRoot(SqrtD + Q);
-            return U + V - B / 3 * A;
+            local u = CubeRoot(-Q);
+            return 2 * u - (1 / 3) * CoefficientA, -u - (1 / 3) * CoefficientA;
         end;
+    elseif Discriminant < 0 then
+        local Phi = (1 / 3) * math.acos(-Q / math.sqrt(-CB_P));
+        local T = 2 * math.sqrt(-P);
+        return T * math.cos(Phi) - (1 / 3) * CoefficientA, -T * math.cos(Phi + math.pi / 3) - (1 / 3) * CoefficientA, -T * math.cos(Phi - math.pi / 3) - (1 / 3) * CoefficientA;
+    else
+        local SqrtD = math.sqrt(Discriminant);
+        local U = CubeRoot(SqrtD - Q);
+        local V = -CubeRoot(SqrtD + Q);
+        return U + V - (1 / 3) * CoefficientA;
     end;
 end;
---[[local SolveCubic = function(c0, c1, c2, c3)
-    local s0, s1, s2
+--[[local function SolveCubic(c0, c1, c2, c3)
+	local s0, s1, s2
 
-    local num, sub
-    local A, B, C
-    local sq_A, p, q
-    local cb_p, D
+	local num, sub
+	local A, B, C
+	local sq_A, p, q
+	local cb_p, D
 
-    -- normal form: x^3 + Ax^2 + Bx + C = 0
-    A = c1 / c0
-    B = c2 / c0
-    C = c3 / c0
+	-- normal form: x^3 + Ax^2 + Bx + C = 0
+	A = c1 / c0
+	B = c2 / c0
+	C = c3 / c0
 
-    -- substitute x = y - A/3 to eliminate quadric term: x^3 + px + q = 0
-    sq_A = A * A
-    p = (1 / 3) * (-(1 / 3) * sq_A + B)
-    q = 0.5 * ((2 / 27) * A * sq_A - (1 / 3) * A * B + C)
+	-- substitute x = y - A/3 to eliminate quadric term: x^3 + px + q = 0
+	sq_A = A * A
+	p = (1 / 3) * (-(1 / 3) * sq_A + B)
+	q = 0.5 * ((2 / 27) * A * sq_A - (1 / 3) * A * B + C)
 
-    -- use Cardano's formula
-    cb_p = p * p * p
-    D = q * q + cb_p
+	-- use Cardano's formula
+	cb_p = p * p * p
+	D = q * q + cb_p
 
-    if IsZero(D) then
-        if IsZero(q) then -- one triple solution
-            s0 = 0
-            num = 1
-            --return s0
-        else -- one single and one double solution
-            local u = CubeRoot(-q)
-            s0 = 2 * u
-            s1 = -u
-            num = 2
-            --return s0, s1
-        end
-    elseif (D < 0) then -- Casus irreducibilis: three real solutions
-        local phi = (1 / 3) * math.acos(-q / math.sqrt(-cb_p))
-        local t = 2 * math.sqrt(-p)
+	if IsZero(D) then
+		if IsZero(q) then -- one triple solution
+			s0 = 0
+			num = 1
+			--return s0
+		else -- one single and one double solution
+			local u = CubeRoot(-q)
+			s0 = 2 * u
+			s1 = -u
+			num = 2
+			--return s0, s1
+		end
+	elseif (D < 0) then -- Casus irreducibilis: three real solutions
+		local phi = (1 / 3) * math.acos(-q / math.sqrt(-cb_p))
+		local t = 2 * math.sqrt(-p)
 
-        s0 = t * math.cos(phi)
-        s1 = -t * math.cos(phi + math.pi / 3)
-        s2 = -t * math.cos(phi - math.pi / 3)
-        num = 3
-        --return s0, s1, s2
-    else -- one real solution
-        local sqrt_D = math.sqrt(D)
-        local u = CubeRoot(sqrt_D - q)
-        local v = -CubeRoot(sqrt_D + q)
+		s0 = t * math.cos(phi)
+		s1 = -t * math.cos(phi + math.pi / 3)
+		s2 = -t * math.cos(phi - math.pi / 3)
+		num = 3
+		--return s0, s1, s2
+	else -- one real solution
+		local sqrt_D = math.sqrt(D)
+		local u = CubeRoot(sqrt_D - q)
+		local v = -CubeRoot(sqrt_D + q)
 
-        s0 = u + v
-        num = 1
+		s0 = u + v
+		num = 1
 
-        --return s0
-    end
+		--return s0
+	end
 
-    -- resubstitute
-    sub = (1 / 3) * A
+	-- resubstitute
+	sub = (1 / 3) * A
 
-    if (num > 0) then s0 = s0 - sub end
-    if (num > 1) then s1 = s1 - sub end
-    if (num > 2) then s2 = s2 - sub end
+	if (num > 0) then s0 = s0 - sub end
+	if (num > 1) then s1 = s1 - sub end
+	if (num > 2) then s2 = s2 - sub end
 
-    return s0, s1, s2
-end;]]
+	return s0, s1, s2
+end]]
 
 local SolveQuartic = function(C0, C1, C2, C3, C4)
+    local S0, S1, S2, S3;
     local Coeffs = {};
+    local Z, U, V, Sub, Num, SQ_A, P, Q, R;
+
     local A, B, C, D = C1 / C0, C2 / C0, C3 / C0, C4 / C0;
 
-    local P = -3 * A * A / 8 + B;
-    local Q = A * A * A / 8 - A * B / 2 + C
-    local R = -3 * A * A * A * A / 256 + A * A * B / 16 - A * C / 4 + D
-    local Results = {SolveCubic(1, 2 * P, P * P - 4 * R, -Q * Q)};
-    local U = Results[1];
+    SQ_A = A * A;
+    P = -0.375 * SQ_A + B;
+    Q = 0.125 * SQ_A * A - 0.5 * A * B + C;
+    R = -(3 / 256) * SQ_A * SQ_A + 0.0625 * SQ_A * B - 0.25 * A * C + D;
 
-    local Res = {};
-    if not U then
-        return nil;
-    elseif IsZero(U) then
-        local V = math.sqrt(P * P - 4 * R);
-        local Temp = math.sqrt(-P + (12 * A * A - 4 * V) / U);
-        if Temp ~= nil then
-            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 - Temp / 2 - A / 4);
-            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 + Temp / 2 - A / 4);
-        end
-    elseif U > 0 then
-        local Y = math.sqrt(U);
-        local V = math.sqrt(P * P - 4 * R);
-        local Temp = math.sqrt(-P - (12 * A * A + 4 * V) / U);
-        if Temp ~= nil then
-            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 - Y / 2 - Temp / 2 - A / 4);
-            table.insert(Res, (-3 * A * A / 4 + math.sqrt(2) * V) / 2 - Y / 2 + Temp / 2 - A / 4);
-        end;
+    if IsZero(R) then
+        Coeffs[3], Coeffs[2], Coeffs[1], Coeffs[0]  = Q, P, 0, 1;
+
+        local Results = {SolveCubic(Coeffs[0], Coeffs[1], Coeffs[2], Coeffs[3])}
+        Num = #Results
+        S0, S1, S2 = Results[1], Results[2], Results[3]
     else
-        return nil;
-    end;
+        Coeffs[3], Coeffs[2], Coeffs[1], Coeffs[0]  = 0.5 * R * P - 0.125 * Q * Q, -R, -0.5 * P, 1;
 
-    for Index1 = 1, #Res do
-        local Z = Res[Index1];
-        Coeffs[3] = Z;
-        Coeffs[2] = P / 2 - Z * Z - Q / Z;
-        Coeffs[1] = Z - A / 4;
-        Coeffs[0] = 1;
+        S0, S1, S2 = SolveCubic(Coeffs[0], Coeffs[1], Coeffs[2], Coeffs[3]);
+        Z = S0;
+        U = Z * Z - R;
+        V = 2 * Z - P;
 
-        local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
-        for Index2 = 1, #Results do
-            if IsZero(Results[Index2]) then Results[Index2] = 0; end;
-            table.insert(Res, Results[Index2]);
+        if IsZero(U) then U = 0;
+        elseif (U > 0) then U = math.sqrt(U);
+        else return;
         end;
-    end;
 
-    return unpack(Res);
-end;
---[[local SolveQuartic = function(c0, c1, c2, c3, c4)
-    local s0, s1, s2, s3
+        if IsZero(V) then V = 0;
+        elseif (V > 0) then V = math.sqrt(V);
+        else return;
+        end;
 
-    local coeffs = {}
-    local z, u, v, sub
-    local A, B, C, D
-    local sq_A, p, q, r
-    local num
-
-    -- normal form: x^4 + Ax^3 + Bx^2 + Cx + D = 0
-    A = c1 / c0
-    B = c2 / c0
-    C = c3 / c0
-    D = c4 / c0
-
-    -- substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
-    sq_A = A * A
-    p = -0.375 * sq_A + B
-    q = 0.125 * sq_A * A - 0.5 * A * B + C
-    r = -(3 / 256) * sq_A * sq_A + 0.0625 * sq_A * B - 0.25 * A * C + D
-
-    if IsZero(r) then
-        -- no absolute term: y(y^3 + py + q) = 0
-        coeffs[3] = q
-        coeffs[2] = p
-        coeffs[1] = 0
-        coeffs[0] = 1
-
-        local results = {SolveCubic(coeffs[0], coeffs[1], coeffs[2], coeffs[3])}
-        num = #results
-        s0, s1, s2 = results[1], results[2], results[3]
-    else
-        -- solve the resolvent cubic …
-        coeffs[3] = 0.5 * r * p - 0.125 * q * q
-        coeffs[2] = -r
-        coeffs[1] = -0.5 * p
-        coeffs[0] = 1
-
-        s0, s1, s2 = SolveCubic(coeffs[0], coeffs[1], coeffs[2], coeffs[3])
-
-        -- … and take the one real solution …
-        z = s0
-
-        -- … to build two quadric equations
-        u = z * z - r
-        v = 2 * z - p
-
-        if IsZero(u) then
-            u = 0
-        elseif (u > 0) then
-            u = math.sqrt(u)
-        else
-            return
-        end
-
-        if IsZero(v) then
-            v = 0
-        elseif (v > 0) then
-            v = math.sqrt(v)
-        else
-            return
-        end
-
-        coeffs[2] = z - u
-        coeffs[1] = q < 0 and -v or v
-        coeffs[0] = 1
+        Coeffs[2], Coeffs[1], Coeffs[0] = Z - U, Q < 0 and -V or V, 1;
 
         do
-            local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
-            num = #results
-            s0, s1 = results[1], results[2]
-        end
+            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
+            Num = #Results;
+            S0, S1 = Results[1], Results[2];
+        end;
 
-        coeffs[2] = z + u
-        coeffs[1] = q < 0 and v or -v
-        coeffs[0] = 1
+        Coeffs[2], Coeffs[1], Coeffs[0] = Z + U, Q < 0 and V or -V, 1;
 
-        if (num == 0) then
-            local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
-            num = num + #results
-            s0, s1 = results[1], results[2]
-        end
+        if (Num == 0) then
+            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
+            Num = Num + #Results;
+            S0, S1 = Results[1], Results[2];
+        end;
 
-        if (num == 1) then
-            local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
-            num = num + #results
-            s1, s2 = results[1], results[2]
-        end
+        if (Num == 1) then
+            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
+            Num = Num + #Results;
+            S1, S2 = Results[1], Results[2];
+        end;
 
-        if (num == 2) then
-            local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
-            num = num + #results
-            s2, s3 = results[1], results[2]
-        end
-    end
+        if (Num == 2) then
+            local Results = {SolveQuadric(Coeffs[0], Coeffs[1], Coeffs[2])};
+            Num = Num + #Results;
+            S2, S3 = Results[1], Results[2];
+        end;
+    end;
 
-    -- resubstitute
-    sub = 0.25 * A
+    Sub = 0.25 * A;
 
-    if (num > 0) then s0 = s0 - sub end
-    if (num > 1) then s1 = s1 - sub end
-    if (num > 2) then s2 = s2 - sub end
-    if (num > 3) then s3 = s3 - sub end
+    --print("Num:", Num);
+    if (Num > 0) then S0 = C0 * (S0 - Sub); end;
+    if (Num > 1) then S1 = C0 * (S1 - Sub); end;
+    if (Num > 2) then S2 = C0 * (S2 - Sub); end;
+    if (Num > 3) then S3 = C0 * (S3 - Sub); end;
 
-    return s3, s2, s1, s0;
-    --return s0, s1, s2, s3
-    --return {s3, s2, s1, s0}
-end;]]
+    return S3, S2, S1, S0;
+end;
+--[[local function SolveQuartic(c0, c1, c2, c3, c4)
+	local s0, s1, s2, s3
+
+	local coeffs = {}
+	local z, u, v, sub
+	local A, B, C, D
+	local sq_A, p, q, r
+	local num
+
+	-- normal form: x^4 + Ax^3 + Bx^2 + Cx + D = 0
+	A = c1 / c0
+	B = c2 / c0
+	C = c3 / c0
+	D = c4 / c0
+
+	-- substitute x = y - A/4 to eliminate cubic term: x^4 + px^2 + qx + r = 0
+	sq_A = A * A
+	p = -0.375 * sq_A + B
+	q = 0.125 * sq_A * A - 0.5 * A * B + C
+	r = -(3 / 256) * sq_A * sq_A + 0.0625 * sq_A * B - 0.25 * A * C + D
+
+	if IsZero(r) then
+		-- no absolute term: y(y^3 + py + q) = 0
+		coeffs[3] = q
+		coeffs[2] = p
+		coeffs[1] = 0
+		coeffs[0] = 1
+
+		local results = {SolveCubic(coeffs[0], coeffs[1], coeffs[2], coeffs[3])}
+		num = #results
+		s0, s1, s2 = results[1], results[2], results[3]
+	else
+		-- solve the resolvent cubic …
+		coeffs[3] = 0.5 * r * p - 0.125 * q * q
+		coeffs[2] = -r
+		coeffs[1] = -0.5 * p
+		coeffs[0] = 1
+
+		s0, s1, s2 = SolveCubic(coeffs[0], coeffs[1], coeffs[2], coeffs[3])
+
+		-- … and take the one real solution …
+		z = s0
+
+		-- … to build two quadric equations
+		u = z * z - r
+		v = 2 * z - p
+
+		if IsZero(u) then
+			u = 0
+		elseif (u > 0) then
+			u = math.sqrt(u)
+		else
+			return
+		end
+
+		if IsZero(v) then
+			v = 0
+		elseif (v > 0) then
+			v = math.sqrt(v)
+		else
+			return
+		end
+
+		coeffs[2] = z - u
+		coeffs[1] = q < 0 and -v or v
+		coeffs[0] = 1
+
+		do
+			local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
+			num = #results
+			s0, s1 = results[1], results[2]
+		end
+
+		coeffs[2] = z + u
+		coeffs[1] = q < 0 and v or -v
+		coeffs[0] = 1
+
+		if (num == 0) then
+			local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
+			num = num + #results
+			s0, s1 = results[1], results[2]
+		end
+
+		if (num == 1) then
+			local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
+			num = num + #results
+			s1, s2 = results[1], results[2]
+		end
+
+		if (num == 2) then
+			local results = {SolveQuadric(coeffs[0], coeffs[1], coeffs[2])}
+			num = num + #results
+			s2, s3 = results[1], results[2]
+		end
+	end
+
+	-- resubstitute
+	sub = 0.25 * A
+
+	if (num > 0) then s0 = s0 - sub end
+	if (num > 1) then s1 = s1 - sub end
+	if (num > 2) then s2 = s2 - sub end
+	if (num > 3) then s3 = s3 - sub end
+
+	return s3, s2, s1, s0
+	--return s0, s1, s2, s3
+	--return {s3, s2, s1, s0}
+end]]
 
 function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
-    Gravity, GravityCorrection = ProjectileGravity or workspace.Gravity, GravityCorrection or 2;
+	Gravity, GravityCorrection, Option = ProjectileGravity or workspace.Gravity, GravityCorrection or 2, Option or 1;
 
-    local Disp = TPos - Origin;
-    local GCorrection = -(Gravity / GravityCorrection);
+	local Disp = (TPos - Origin);
+	GCorrection = -(Gravity / GravityCorrection);
 
     if Option == 1 then
         local Tof = SolveQuartic(
             GCorrection * GCorrection,
             -GravityCorrection * TVelocity.Y * GCorrection,
             TVelocity.Y * TVelocity.Y - GravityCorrection * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
-            GravityCorrection * Disp.Y * TVelocity.Y + GCorrection * Disp.X * TVelocity.X + GravityCorrection * Disp.Z * TVelocity.Z,
+            GravityCorrection * Disp.Y * TVelocity.Y + GravityCorrection * Disp.X * TVelocity.X + GravityCorrection * Disp.Z * TVelocity.Z,
             Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
         );
 
@@ -330,7 +343,7 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
 
         if Solutions then
             local PosRoots = {};
-            for Index = 1, #Solutions do -- Filter Out The Negative Roots
+            for Index = 1, #Solutions do
                 local Solution = Solutions[Index];
                 if Solution > 0 then
                     table.insert(PosRoots, Solution);
@@ -347,6 +360,12 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
             end;
         end;
     end;
+
+	return TPos;
 end;
 
 return Module;
+
+--[[local T = workspace.;
+print(T.Position)
+print(Module.SolveTrajectory(workspace:FindFirstChildOfClass("Camera").CFrame.Position - Vector3.new(0, 1, 0), T.Position, T.AssemblyLinearVelocity, 100, 5, 2, 1));]]
