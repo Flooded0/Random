@@ -300,7 +300,7 @@ end;]]
 function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
     Gravity, GravityCorrection = ProjectileGravity or workspace.Gravity, GravityCorrection or 2;
 
-    local Disp = (TPos - Origin);
+    local Disp = TPos - Origin;
     local GCorrection = -(Gravity / GravityCorrection);
 
     if Option == 1 then
@@ -312,7 +312,6 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
             Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
         );
 
-        if Tof <= 0 then return Origin; end;
         if Tof and Tof > 0 then
             return Origin + Vector3.new(
                 (Disp.X + TVelocity.X * Tof) / Tof,
