@@ -25,6 +25,13 @@ return {
         ["SkyboxLf"] = "http://www.roblox.com/asset/?id=2675785344",
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=2675785344",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=2675785344"
+    }, ["PurpleNight Vibe"] = {
+        ["SkyboxBk"] = "http://www.roblox.com/asset/?id=5084575798",
+        ["SkyboxDn"] = "http://www.roblox.com/asset/?id=5084575916",
+        ["SkyboxFt"] = "http://www.roblox.com/asset/?id=5103949679",
+        ["SkyboxLf"] = "http://www.roblox.com/asset/?id=5103948542",
+        ["SkyboxRt"] = "http://www.roblox.com/asset/?id=5103948784",
+        ["SkyboxUp"] = "http://www.roblox.com/asset/?id=5084576400"
     }, ["Galaxy"] = {
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=159454299",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=159454296",
@@ -47,6 +54,7 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=296908764",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=296908769"
     }, ["Night Sky"] = {
+        ["StarCount"] = 0,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=12064107",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=12064152",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=12064121",
@@ -110,8 +118,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=1045964655",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=1045962969"
     }, ["Alien Red (Nostalgia)"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?version=1&id=1012890",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?version=1&id=1012891",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?version=1&id=1012887",
@@ -119,8 +125,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?version=1&id=1012888",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?version=1&id=1014449"
     }, ["Cloudy Skies"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=252760981",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=252763035",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=252761439",
@@ -128,7 +132,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=252760986",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=252762652"
     }, ["Counter Strike City"] = {
-        ["StarCount"] = 3000,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=2240134413",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=2240136039",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=2240130790",
@@ -136,8 +139,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=2240132643",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=2240135222"
     }, ["Dark City"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=1424486234",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=1424485998",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=1424485697",
@@ -145,7 +146,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=1424484760",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=1424484510"
     }, ["Earth"] = {
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=166509999",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=166510057",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=166510116",
@@ -153,8 +153,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=166510131",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=166510114"
     }, ["Mountains"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=368385273",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=48015300",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=368388290",
@@ -162,8 +160,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=368385190",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=48015387"
     }, ["Old Skybox"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=15436783",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=15436796",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=15436831",
@@ -171,7 +167,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=15437166",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=15437184"
     }, ["Purple Nebula"] = {
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=159454299",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=159454296",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=159454293",
@@ -179,7 +174,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=159454300",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=159454288"
     }, ["RedSky"] = {
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/Asset/?ID=401664839",
         ["SkyboxDn"] = "http://www.roblox.com/Asset/?ID=401664862",
         ["SkyboxFt"] = "http://www.roblox.com/Asset/?ID=401664960",
@@ -187,8 +181,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/Asset/?ID=401664901",
         ["SkyboxUp"] = "http://www.roblox.com/Asset/?ID=401664936"
     }, ["Stormy Sky"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?version=1&id=1327366",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?version=1&id=1327367",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?version=1&id=1327362",
@@ -196,8 +188,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?version=1&id=1327361",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?version=1&id=1327368"
     }, ["Twilight"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=264908339",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=264907909",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=264909420",
@@ -205,8 +195,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=264908886",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=264907379"
     }, ["Vivid Skies"] = {
-        ["StarCount"] = 3000,
-        ["SunAngularSize"] = 21,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=2800905936",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=2800905936",
         ["SkyboxFt"] = "http://www.roblox.com/asset/?id=2800905116",
@@ -214,7 +202,6 @@ return {
         ["SkyboxRt"] = "http://www.roblox.com/asset/?id=2800903916",
         ["SkyboxUp"] = "http://www.roblox.com/asset/?id=2800906739"
     }, ["Wasteland"] = {
-        ["StarCount"] = 3000,
         ["SunAngularSize"] = 23,
         ["SkyboxBk"] = "http://www.roblox.com/asset/?id=2046134302",
         ["SkyboxDn"] = "http://www.roblox.com/asset/?id=2046134976",
