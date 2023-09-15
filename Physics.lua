@@ -62,7 +62,7 @@ end;
         return U + V - (1 / 3) * CoefficientA;
     end;
 end;]]
-local function SolveCubic(c0, c1, c2, c3)
+local SolveCubic = function(c0, c1, c2, c3)
 	local s0, s1, s2
 
 	local num, sub
@@ -126,7 +126,7 @@ local function SolveCubic(c0, c1, c2, c3)
 	return s0, s1, s2
 end
 
-local function SolveQuartic(c0, c1, c2, c3, c4)
+local SolveQuartic = function(c0, c1, c2, c3, c4)
 	local s0, s1, s2, s3
 
 	local coeffs = {}
