@@ -66,5 +66,6 @@ return {
     ["Fart"] = "131314452",
     ["Fart2"] = "6367774932",
     ["FortniteGuns"] = "3008769599",
-    ["The Ting Goes"] = function() local RanT = {"5007348397", "5007348117", "5007347746", "5007347082"}; return RanT[math.random(1, 4)]; end
+    ["The Ting Goes"] = function() local RanT = {"5007348397", "5007348117", "5007347746", "5007347082"}; return RanT[math.random(1, 4)]; end,
+    ["Crickets"] = "2101148",
 };
