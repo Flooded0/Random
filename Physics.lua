@@ -286,7 +286,7 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
         end;
     end;
 
-	return TPos;
+    return TPos;
 end;
 
 return Module;
