@@ -1,14 +1,14 @@
 return {
     ["Snow"] = {
         "SnowOnTop",
-        "Get Snow Now For Free!",
+        "Get Snow Now For 2$!",
         "Demolish Servers With Snow",
         "Imaging Paying For Cheats",
         "The Owner Of Snow Is Gonna Flood You",
         "Come Join Snow At hvW8XeXyQy",
         "SnowOnTop 🔥🔥",
-        "$10 Just To Be OutDone By $0",
-        "Best Free HvH Script",
+        "$10 Just To Be OutDone By $2",
+        "Best 2$ HvH Script",
         "Flooded0 Is Actually A Co-Owner Of AR2",
         "Imagine Not Getting Hacks In A Block Game",
         "Snow Is So Cool, You Should Get It For Free!",
