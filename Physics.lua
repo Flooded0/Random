@@ -253,7 +253,7 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
         if Tof and Tof > 0 then
             return Origin + Vector3.new(
                 (Disp.X + TVelocity.X * Tof) / Tof,
-                (Disp.Y + TVelocity.Y * Tof - GCorrection * Tof * Tof) / Tof,
+                (Disp.Y + TVelocity.Y * Tof - GravityCorrection * Tof * Tof) / Tof,
                 (Disp.Z + TVelocity.Z * Tof) / Tof
             );
         end;
@@ -279,14 +279,14 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
                 local PR = PosRoots[1];
                 return Origin + Vector3.new(
                     (Disp.X + TVelocity.X * PR) / PR,
-                    (Disp.Y + TVelocity.Y * PR - GCorrection * PR * PR) / PR,
+                    (Disp.Y + TVelocity.Y * PR - GravityCorrection * PR * PR) / PR,
                     (Disp.Z + TVelocity.Z * PR) / PR
                 );
             end;
         end;
     end;
 
-    return TPos;
+	return TPos;
 end;
 
 return Module;
