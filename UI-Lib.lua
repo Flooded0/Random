@@ -153,7 +153,9 @@ function libraryX:Create(Class, Properties)
 
     table.insert(self.Instances, {Object = New, Method = IsDrawingClass[Class]});
     return New;
-end; function libraryX:AddConnection(Connection, Name, CallBack)
+end;
+
+function libraryX:AddConnection(Connection, Name, CallBack)
     CallBack = typeof(Name) == "function" and Name or CallBack;
     local NewConnection = Connection:Connect(CallBack);
     if Name ~= CallBack then
@@ -273,8 +275,8 @@ end; function libraryX:GetConfigs()
         local FilePath = FileList[Index];
         if FilePath:sub(-FileTextLength) == self.FileText then
             Count = Count + 1;
-			local FileName = FilePath:gsub(self.FolderName .. "/" .. self.GameTitle .. "[/\\]", ""):gsub(self.FileText, "");
-			Files[Count] = FileName;
+            local FileName = FilePath:gsub(self.FolderName .. "/" .. self.GameTitle .. "[/\\]", ""):gsub(self.FileText, "");
+            Files[Count] = FileName;
         end;
     end;
 
@@ -294,7 +296,7 @@ end; function libraryX:GetConfigs()
         end;
     end;]]
 
-	return Files or {};
+	return Files;
 end;
 
 --[[
@@ -325,9 +327,9 @@ function libraryX:Notify(Type, Text, Time)
 		return warn(("Invalid Type, Got %s, Expected String"):format(type(Type)));
     elseif type(Text) ~= "string" then
 		return warn(("Invalid Text, Got %s, Expected String"):format(type(Text)));
+    elseif type(Time) ~= "number" then
+        return warn(("Invalid Time, Got %s, Expected Number"):format(type(Time)));
     end;
-
-	DTime = Time or 4;
 
     local NotifyOuter = libraryX:Create("Frame", {
         BorderColor3 = Color3.new(0, 0, 0),
@@ -401,7 +403,7 @@ function libraryX:Notify(Type, Text, Time)
 ---@diagnostic disable-next-line: need-check-nil
 	pcall(NotifyOuter:TweenSize(UDim2.new(0, MaxSize + 10, 0, 20), "Out", "Quad", 0.4, true));
 
-	task.delay(DTime, function()
+	task.delay(Time or 4, function()
 ---@diagnostic disable-next-line: need-check-nil
 		pcall(NotifyOuter:TweenSize(UDim2.new(0, 0, 0, 20), "Out", "Quad", 0.4, true));
 		task.wait(0.4);
