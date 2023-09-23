@@ -2,7 +2,7 @@ local Assets = {
     3570695787, 5941353943, 4155801252, 2592362371, 2454009026, 6282522798, 4632082392,
     5843010904, 5553946656, 6071575925, 6071579801, 6073763717, 6214418014, 6214412460, 6214416834, 6214375242, 6214404863, 6214374619, 6214320051, 6214318622, 6073743871, 5351821237, 159454288, 1417494643, 570557727, 264907379, 11711560928, 10300256322, 12652997937, 11696859404, 10341849875, 14007782187, -- BackGround_IDs
     446111271, 967852047, 1263079249, 1177196540, 6091329339, 9744090087, 2200369468, 2141833720, 1275200298, 8236412732, 4595131819, 7151842823, 7151778302, 6333823534, 6511613786, 5864341017, 12781806168, -- BTracer_IDs
-	8133639623, --CVMTexturesT
+    8133639623, --CVMTexturesT
 };
 
 for _, B in pairs(Assets) do
@@ -329,7 +329,7 @@ function libraryX:Notify(Type, Text, Time)
 		return warn(("Invalid Text, Got %s, Expected String"):format(type(Text)));
     end;
 
-	local DTime = DTime or 4;
+	DTime = DTime or 4;
 
     local NotifyOuter = libraryX:Create("Frame", {
         BorderColor3 = Color3.new(0, 0, 0),
@@ -3176,7 +3176,7 @@ function libraryX:Init(...)
 
 	ReplaceMM = function(ToHook, Method, ReplacementFunc)
         if type(Method) ~= "string" or typeof(ReplacementFunc) ~= "function" then
-            self:NotifyP("Error", "Invalid Input To ReplaceMM");
+            self:Notify("Error", "Invalid Input To ReplaceMM");
             return;
         end;
 
@@ -3188,7 +3188,7 @@ function libraryX:Init(...)
         end;
 
         if not Hook then
-            self:NotifyP("Error", "Failed To Hook Method " .. Method);
+            self:Notify("Error", "Failed To Hook Method " .. Method);
             return;
         end;
     end;
