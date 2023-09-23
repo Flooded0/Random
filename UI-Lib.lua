@@ -37,9 +37,9 @@ local libraryX = {
     --Indicators = {},
 
     TabSize = 1,
-	Theme = {},
+    Theme = {},
     FolderName = "Snow_Configs",
-	GameTitle = "Universal",
+    GameTitle = "Universal",
     FileText = ".O"
 };
 
@@ -52,15 +52,15 @@ local WhiteListedMouseInputs = {Enum.UserInputType.MouseButton1, Enum.UserInputT
 
 -- | Functions
 --[[libraryX.Round = function(Num, Bracket)
-	if typeof(Num) == "Vector2" then
-		return Vector2.new(libraryX.Round(Num.X), libraryX.Round(Num.Y));
-	elseif typeof(Num) == "Vector3" then
-		return Vector3.new(libraryX.Round(Num.X), libraryX.Round(Num.Y), libraryX.Round(Num.Z));
-	elseif typeof(Num) == "Color3" then
-		return libraryX.Round(Num.R * 255), libraryX.Round(Num.G * 255), libraryX.Round(Num.B * 255);
-	else
-		return Num - Num % (Bracket or 1);
-	end;
+    if typeof(Num) == "Vector2" then
+        return Vector2.new(libraryX.Round(Num.X), libraryX.Round(Num.Y));
+    elseif typeof(Num) == "Vector3" then
+        return Vector3.new(libraryX.Round(Num.X), libraryX.Round(Num.Y), libraryX.Round(Num.Z));
+    elseif typeof(Num) == "Color3" then
+        return libraryX.Round(Num.R * 255), libraryX.Round(Num.G * 255), libraryX.Round(Num.B * 255);
+    else
+        return Num - Num % (Bracket or 1);
+    end;
 end;]]
 
 local IsFinite = function(Num)
@@ -111,16 +111,15 @@ libraryX.Round = function(Num, Bracket, Direction)
             return Vector3.new(unpack(RoundedComponents));
         end;
     elseif typeof(Num) == "Color3" then
-		return libraryX.Round(Num.R * 255, Bracket, Direction), libraryX.Round(Num.G * 255, Bracket, Direction), libraryX.Round(Num.B * 255, Bracket, Direction);
-	else
+        return libraryX.Round(Num.R * 255, Bracket, Direction), libraryX.Round(Num.G * 255, Bracket, Direction), libraryX.Round(Num.B * 255, Bracket, Direction);
+    else
         warn("Invalid Input Type | Function Round");
     end;
 end;
 
 --[[libraryX.FormatNumber = function(Num, DecimalPlaces)
     return tonumber(("%." .. DecimalPlaces .. "f"):format(Num));
-end;]]
-libraryX.FormatNumber = function(Num, DecimalPlaces)
+end;]] libraryX.FormatNumber = function(Num, DecimalPlaces)
     local Pattern = "^-?%d+%.?%d" .. DecimalPlaces .. "?";
     local Formatted = ("%." .. DecimalPlaces .. "f"):format(Num);
     local Result = Formatted:match(Pattern);
@@ -177,17 +176,17 @@ function libraryX:Unload()
     InputService.MouseIconEnabled = self.MouseState;
 
     --for A in pairs(self.Flags) do self.Flags[A] = nil; end;
-	for Index, Conn in pairs(self.Connections) do
-		Conn:Disconnect();
-		self.Connections[Index] = nil;
-	end;
+    for Index, Conn in pairs(self.Connections) do
+        Conn:Disconnect();
+        self.Connections[Index] = nil;
+    end;
     for Index, Inst in pairs(self.Instances) do
         if Inst.Method then
             pcall(function() Inst.Object:Destroy(); end);
         else
             Inst.Object:Destroy();
         end;
-		self.Instances[Index] = nil;
+        self.Instances[Index] = nil;
     end;
     for _, Option in ipairs(self.Options) do
         if Option.Type == "Toggle" and Option.SetState then
@@ -195,7 +194,7 @@ function libraryX:Unload()
         end;
     end;
 
-	if libraryX.OnUnload then libraryX:OnUnload(); end;
+    if libraryX.OnUnload then libraryX:OnUnload(); end;
     if self.Base then self.Base:Destroy(); end;
 
     table.clear(libraryX); --libraryX = nil;
@@ -265,7 +264,7 @@ end; function libraryX:GetConfigs()
         makefolder(self.FolderName);
     end; if not (isfolder or is_folder)(self.FolderName .. "/" .. self.GameTitle) then
         makefolder(self.FolderName .. "/" .. self.GameTitle);
-		return {};
+        return {};
     end;
 
     local Files, Count = {}, 0;
@@ -280,15 +279,15 @@ end; function libraryX:GetConfigs()
         end;
     end;
 
-	--[[local Files, FileTextLength = {}, #self.FileText;
-	for _, FilePath in ipairs(listfiles(self.FolderName)) do
-		if FilePath:sub(-FileTextLength) == self.FileText then
-			local FilePath = FilePath:sub(#self.FolderName + 1, -FileTextLength - 1):gsub("[/\\]", "");
-			table.insert(Files, FilePath);
-		end;
-	end;]]
+    --[[local Files, FileTextLength = {}, #self.FileText;
+    for _, FilePath in ipairs(listfiles(self.FolderName)) do
+        if FilePath:sub(-FileTextLength) == self.FileText then
+            local FilePath = FilePath:sub(#self.FolderName + 1, -FileTextLength - 1):gsub("[/\\]", "");
+            table.insert(Files, FilePath);
+        end;
+    end;]]
 
-	--[[local Files, FileTextLength = {}, #self.FileText;
+    --[[local Files, FileTextLength = {}, #self.FileText;
     for _, FileName in next, listfiles(self.FolderName .. "/" .. self.GameTitle) do
         if FileName:sub(-FileTextLength) == self.FileText then
             local FilePath = FileName:gsub(self.FolderName .. "/" .. self.GameTitle .. "[/\\]", ""):gsub(self.FileText, "");
@@ -296,7 +295,7 @@ end; function libraryX:GetConfigs()
         end;
     end;]]
 
-	return Files;
+    return Files;
 end;
 
 --[[
@@ -311,25 +310,25 @@ OtherS:AddToggle({Text = "Target Indicator", Flag = "TIndicator", CallBack = fun
     libraryX.TIndicator:SetEnabled(State);
 end})
 OtherS:AddSlider({Text = "Position X", Flag = "TIndicatorX", TextPos = 2, Min = 0, Max = 100, Float = 0.1, Value = 0.5, CallBack = function(Value)
-	if libraryX.Flags["TIndicator"] then
-		libraryX.TIndicator:SetPosition(UDim2.new(Value / 100, 0, libraryX.Flags["TIndicatorY"] / 100, 0));
-	end;
+    if libraryX.Flags["TIndicator"] then
+        libraryX.TIndicator:SetPosition(UDim2.new(Value / 100, 0, libraryX.Flags["TIndicatorY"] / 100, 0));
+    end;
 end});
 OtherS:AddSlider({Text = "Position Y", Flag = "TIndicatorY", TextPos = 2, Min = 0, Max = 100, Float = 0.1, Value = 35, CallBack = function(Value)
     if libraryX.Flags["TIndicator"] then
-		libraryX.TIndicator:SetPosition(UDim2.new(libraryX.Flags["TIndicatorX"] / 100, 0, Value / 100, 0));
-	end;
+        libraryX.TIndicator:SetPosition(UDim2.new(libraryX.Flags["TIndicatorX"] / 100, 0, Value / 100, 0));
+    end;
 end});
 ]]
 
 function libraryX:Notify(Type, Text, Time)
-	if type(Type) ~= "string" then
-		return warn(("Invalid Type, Got %s, Expected String"):format(type(Type)));
+    if type(Type) ~= "string" then
+        return warn(("Invalid Type, Got %s, Expected String"):format(type(Type)));
     elseif type(Text) ~= "string" then
-		return warn(("Invalid Text, Got %s, Expected String"):format(type(Text)));
+        return warn(("Invalid Text, Got %s, Expected String"):format(type(Text)));
     end;
 
-	DTime = DTime or 4;
+    DTime = DTime or 4;
 
     local NotifyOuter = libraryX:Create("Frame", {
         BorderColor3 = Color3.new(0, 0, 0),
@@ -362,33 +361,27 @@ function libraryX:Notify(Type, Text, Time)
 
     libraryX:Create("UIGradient", {
         Color = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromHSV(0.0732026, 0.0732026, 0.0732026)),
-			ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 28, 28)),
+            ColorSequenceKeypoint.new(0, Color3.fromHSV(0.0732026, 0.0732026, 0.0732026)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 28, 28)),
         });
         Rotation = -90,
         Parent = InnerFrame
     });
 
-	local ErrLookup = {
-		Success = "Success: ",
-		Info = "Info: ",
-		Warning = "Warning: ",
-		Error = "Error: ",
-		None = ""
-	};
+    local ErrLookup = {Success = "Success: ", Info = "Info: ",Warning = "Warning: ", Error = "Error: ", None = ""};
 
-	local TextLabel = libraryX:Create("TextLabel", {
-		Position = UDim2.new(0, 4, 0, 0),
-		Size = UDim2.new(1, -4, 1, 0),
-		BackgroundTransparency = 1,
-		Text =  ((ErrLookup[Type] or "") .. tostring(Text)) or "Empty",
-		TextColor3 = Color3.new(1, 1, 1),
-		TextXAlignment = Enum.TextXAlignment.Left,
-		TextSize = 13,
-		Font = Enum.Font.Code,
-		ZIndex = 103,
-		Parent = InnerFrame
-	}); if not TextLabel then return; end;
+    local TextLabel = libraryX:Create("TextLabel", {
+        Position = UDim2.new(0, 4, 0, 0),
+        Size = UDim2.new(1, -4, 1, 0),
+        BackgroundTransparency = 1,
+        Text =  ((ErrLookup[Type] or "") .. tostring(Text)) or "Empty",
+        TextColor3 = Color3.new(1, 1, 1),
+        TextXAlignment = Enum.TextXAlignment.Left,
+        TextSize = 13,
+        Font = Enum.Font.Code,
+        ZIndex = 103,
+        Parent = InnerFrame
+    }); if not TextLabel then return; end;
 
     local MaxSize = libraryX.GetTextBounds(TextLabel.Text, Enum.Font.Code, 13, "1");
     table.insert(libraryX.Theme, libraryX:Create("Frame", {
@@ -401,16 +394,16 @@ function libraryX:Notify(Type, Text, Time)
     }));
 
 ---@diagnostic disable-next-line: need-check-nil
-	pcall(NotifyOuter:TweenSize(UDim2.new(0, MaxSize + 10, 0, 20), "Out", "Quad", 0.4, true));
+    pcall(NotifyOuter:TweenSize(UDim2.new(0, MaxSize + 10, 0, 20), "Out", "Quad", 0.4, true));
 
-	task.delay(DTime, function()
+    task.delay(DTime, function()
 ---@diagnostic disable-next-line: need-check-nil
-		pcall(NotifyOuter:TweenSize(UDim2.new(0, 0, 0, 20), "Out", "Quad", 0.4, true));
-		task.wait(0.4);
-		table.remove(libraryX.Notifications, table.find(libraryX.Notifications, NotifyOuter));
+        pcall(NotifyOuter:TweenSize(UDim2.new(0, 0, 0, 20), "Out", "Quad", 0.4, true));
+        task.wait(0.4);
+        table.remove(libraryX.Notifications, table.find(libraryX.Notifications, NotifyOuter));
 ---@diagnostic disable-next-line: need-check-nil
-		NotifyOuter:Destroy();
-	end);
+        NotifyOuter:Destroy();
+    end);
 end;
 
 -- | UI-Functions
@@ -444,267 +437,267 @@ libraryX.CreateLabel = function(Option, Parent)
 end;
 
 libraryX.CreateDivider = function(Option, Parent)
-	Option.Main = libraryX:Create("Frame", {
-		LayoutOrder = Option.Position,
-		Size = UDim2.new(1, 0, 0, 17.5),
-		BackgroundTransparency = 1,
-		Parent = Parent
-	});
+    Option.Main = libraryX:Create("Frame", {
+        LayoutOrder = Option.Position,
+        Size = UDim2.new(1, 0, 0, 17.5),
+        BackgroundTransparency = 1,
+        Parent = Parent
+    });
 
-	libraryX:Create("Frame", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, -0.9, 0.5, -0.9),
-		Size = UDim2.new(1, -15, 0, 1.5),
-		BackgroundColor3 = Color3.fromRGB(60, 60, 60),
-		BorderColor3 = Color3.new(),
-		Parent = Option.Main
-	});
+    libraryX:Create("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, -0.9, 0.5, -0.9),
+        Size = UDim2.new(1, -15, 0, 1.5),
+        BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+        BorderColor3 = Color3.new(),
+        Parent = Option.Main
+    });
 
-	Option.Title = libraryX:Create("TextLabel", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.new(0.5, 0, 0.5, 0),
-		BackgroundColor3 = Color3.fromRGB(30, 30, 30),
-		BorderSizePixel = 0,
-		TextColor3 =  Color3.new(1, 1, 1),
-		TextWrapped = true,
-		TextSize = 13,
-		Font = Enum.Font.Code,
-		TextXAlignment = Enum.TextXAlignment["Center"],
-		Parent = Option.Main
-	});
+    Option.Title = libraryX:Create("TextLabel", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+        BorderSizePixel = 0,
+        TextColor3 =  Color3.new(1, 1, 1),
+        TextWrapped = true,
+        TextSize = 13,
+        Font = Enum.Font.Code,
+        TextXAlignment = Enum.TextXAlignment["Center"],
+        Parent = Option.Main
+    });
 
-	function Option:SetText(Text)
-		Option.Text = Text and tostring(Text) or "";
-		Option.Size  = UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15, "1") + 10, 0, 15);
-	end;
+    function Option:SetText(Text)
+        Option.Text = Text and tostring(Text) or "";
+        Option.Size  = UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15, "1") + 10, 0, 15);
+    end;
 
-	setmetatable(Option, {__newindex = function(_, B, C)
-		if B == "Text" then
-			Option.Title.Text = C and tostring(C) or "";
-			Option.Title.Size = C and UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15, "1") + 10, 0, 15) or UDim2.new();
-			Option.Main.Size = UDim2.new(1, 0, 0, 18);
-		end;
-	end});
+    setmetatable(Option, {__newindex = function(_, B, C)
+        if B == "Text" then
+            Option.Title.Text = C and tostring(C) or "";
+            Option.Title.Size = C and UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15, "1") + 10, 0, 15) or UDim2.new();
+            Option.Main.Size = UDim2.new(1, 0, 0, 18);
+        end;
+    end});
 
-	Option.Text = Option.text;
+    Option.Text = Option.text;
 end;
 
 libraryX.CreateBlank = function(Option, Parent)
     Option.Main = libraryX:Create("Frame", {
         LayoutOrder = Option.Position,
         Position = UDim2.new(0.5, -1, 0.5, 0),
-		BackgroundTransparency = 1;
+        BackgroundTransparency = 1;
         Parent = Parent;
     });
 
     function Option:SetNum(Num)
-		Option.Size = UDim2.new(1, 0, 0, tostring(Num));
-	end;
+        Option.Size = UDim2.new(1, 0, 0, tostring(Num));
+    end;
 
-	setmetatable(Option, {__newindex = function(_, B, C)
-		if B == "Size" then
-			Option.Main.Size = UDim2.new(1, 0, 0, tostring(C));
-		end;
-	end});
+    setmetatable(Option, {__newindex = function(_, B, C)
+        if B == "Size" then
+            Option.Main.Size = UDim2.new(1, 0, 0, tostring(C));
+        end;
+    end});
 
-	Option.Size = Option.size;
+    Option.Size = Option.size;
 end;
 
 libraryX.CreateToggle = function(Option, Parent)
-	Option.HasInit = true;
+    Option.HasInit = true;
 
-	Option.Main = libraryX:Create("Frame", {
-		LayoutOrder = Option.Position,
-		Size = UDim2.new(1, 0, 0, 21),
-		BackgroundTransparency = 1,
-		Parent = Parent
-	});
+    Option.Main = libraryX:Create("Frame", {
+        LayoutOrder = Option.Position,
+        Size = UDim2.new(1, 0, 0, 21),
+        BackgroundTransparency = 1,
+        Parent = Parent
+    });
 
-	local TickBox, TickBoxOverlay;
+    local TickBox, TickBoxOverlay;
     if Option.Style then
-		TickBox = libraryX:Create("ImageLabel", {
-			Position = UDim2.new(0, 6, 0, 4.5),
-			Size = UDim2.new(0, 12, 0, 12),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://3570695787",
-			ImageColor3 = Color3.new(),
-			Parent = Option.Main
-		});
+        TickBox = libraryX:Create("ImageLabel", {
+            Position = UDim2.new(0, 6, 0, 4.5),
+            Size = UDim2.new(0, 12, 0, 12),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://3570695787",
+            ImageColor3 = Color3.new(),
+            Parent = Option.Main
+        });
 
-		libraryX:Create("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(1, -2, 1, -2),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://3570695787",
-			ImageColor3 = Color3.fromRGB(60, 60, 60),
-			Parent = TickBox
-		});
+        libraryX:Create("ImageLabel", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(1, -2, 1, -2),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://3570695787",
+            ImageColor3 = Color3.fromRGB(60, 60, 60),
+            Parent = TickBox
+        });
 
-		libraryX:Create("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(1, -6, 1, -6),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://3570695787",
-			ImageColor3 = Color3.fromRGB(40, 40, 40),
-			Parent = TickBox
-		});
+        libraryX:Create("ImageLabel", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(1, -6, 1, -6),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://3570695787",
+            ImageColor3 = Color3.fromRGB(40, 40, 40),
+            Parent = TickBox
+        });
 
-		TickBoxOverlay = libraryX:Create("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(1, -6, 1, -6),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://3570695787",
-			ImageColor3 = libraryX.Flags["Menu Accent Color"],
-			Visible = Option.State,
-			Parent = TickBox
-		});
+        TickBoxOverlay = libraryX:Create("ImageLabel", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(1, -6, 1, -6),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://3570695787",
+            ImageColor3 = libraryX.Flags["Menu Accent Color"],
+            Visible = Option.State,
+            Parent = TickBox
+        });
 
-		--[[libraryX:Create("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.new(0.5, 0, 0.5, 0),
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://5941353943",
-			ImageTransparency = 0.6,
-			Parent = TickBox
-		});]]
+        --[[libraryX:Create("ImageLabel", {
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://5941353943",
+            ImageTransparency = 0.6,
+            Parent = TickBox
+        });]]
 
-		table.insert(libraryX.Theme, TickBoxOverlay);
-	else
-		TickBox = libraryX:Create("Frame", {
-			Position = UDim2.new(0, 6, 0, 4.5),
-			Size = UDim2.new(0, 12, 0, 12),
-			BackgroundColor3 = libraryX.Flags["Menu Accent Color"],
-			BorderColor3 = Color3.new(),
-			Parent = Option.Main
-		});
+        table.insert(libraryX.Theme, TickBoxOverlay);
+    else
+        TickBox = libraryX:Create("Frame", {
+            Position = UDim2.new(0, 6, 0, 4.5),
+            Size = UDim2.new(0, 12, 0, 12),
+            BackgroundColor3 = libraryX.Flags["Menu Accent Color"],
+            BorderColor3 = Color3.new(),
+            Parent = Option.Main
+        });
 
-		TickBoxOverlay = libraryX:Create("ImageLabel", {
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = Option.State and 1 or 0,
-			BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-			BorderColor3 = Color3.new(),
-			Image = "rbxassetid://4155801252",
-			ImageTransparency = 0.6,
-			ImageColor3 = Color3.new(),
-			Parent = TickBox
-		});
+        TickBoxOverlay = libraryX:Create("ImageLabel", {
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = Option.State and 1 or 0,
+            BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+            BorderColor3 = Color3.new(),
+            Image = "rbxassetid://4155801252",
+            ImageTransparency = 0.6,
+            ImageColor3 = Color3.new(),
+            Parent = TickBox
+        });
 
-		libraryX:Create("ImageLabel", {
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://2592362371",
-			ImageColor3 = Color3.fromRGB(60, 60, 60),
-			ScaleType = Enum.ScaleType.Slice,
-			SliceCenter = Rect.new(2, 2, 62, 62),
-			Parent = TickBox
-		});
+        libraryX:Create("ImageLabel", {
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://2592362371",
+            ImageColor3 = Color3.fromRGB(60, 60, 60),
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(2, 2, 62, 62),
+            Parent = TickBox
+        });
 
-		--[[libraryX:Create("ImageLabel", {
-			Size = UDim2.new(1, -2, 1, -2),
-			Position = UDim2.new(0, 1, 0, 1),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://2592362371",
-			ImageColor3 = Color3.new(),
-			ScaleType = Enum.ScaleType.Slice,
-			SliceCenter = Rect.new(2, 2, 62, 62),
-			Parent = TickBox
-		});]]
+        --[[libraryX:Create("ImageLabel", {
+            Size = UDim2.new(1, -2, 1, -2),
+            Position = UDim2.new(0, 1, 0, 1),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://2592362371",
+            ImageColor3 = Color3.new(),
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(2, 2, 62, 62),
+            Parent = TickBox
+        });]]
 
-		table.insert(libraryX.Theme, TickBox);
-	end;
+        table.insert(libraryX.Theme, TickBox);
+    end;
 
-	Option.Interest = libraryX:Create("Frame", {
-		Position = UDim2.new(0, 0, 0, 0),
-		Size = UDim2.new(1, 0, 0, 20),
-		BackgroundTransparency = 1,
-		Parent = Option.Main
-	});
+    Option.Interest = libraryX:Create("Frame", {
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(1, 0, 0, 20),
+        BackgroundTransparency = 1,
+        Parent = Option.Main
+    });
 
-	Option.Title = libraryX:Create("TextLabel", {
-		Position = UDim2.new(0, 24, 0, -0),
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		Text = Option.Text,
-		TextColor3 =  Option.State and Color3.fromRGB(210, 210, 210) or Color3.fromRGB(180, 180, 180),
-		TextSize = 13,
-		Font = Enum.Font.Code,
-		TextXAlignment = Enum.TextXAlignment["Left"],
-		Parent = Option.Interest
-	});
+    Option.Title = libraryX:Create("TextLabel", {
+        Position = UDim2.new(0, 24, 0, -0),
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Text = Option.Text,
+        TextColor3 =  Option.State and Color3.fromRGB(210, 210, 210) or Color3.fromRGB(180, 180, 180),
+        TextSize = 13,
+        Font = Enum.Font.Code,
+        TextXAlignment = Enum.TextXAlignment["Left"],
+        Parent = Option.Interest
+    });
 
-	Option.Interest.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
-			Option:SetState(not Option.State);
-		elseif input.UserInputType == Enum.UserInputType.MouseMovement and not (libraryX.Warning or libraryX.Slider) then
-			local BorderColor = libraryX.Flags["Menu Accent Color"];
-			if Option.Style then
-				TickBox.ImageColor3 = BorderColor;
-			else
-				TickBox.BorderColor3 = BorderColor;
-				TickBoxOverlay.BorderColor3 = BorderColor;
-			end;
-			if Option.Tip then
-				libraryX.ToolTip.Text = Option.Tip;
-				libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
-			end;
-		end;
-	end);
+    Option.Interest.InputBegan:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Option:SetState(not Option.State);
+        elseif Input.UserInputType == Enum.UserInputType.MouseMovement and not (libraryX.Warning or libraryX.Slider) then
+            local BorderColor = libraryX.Flags["Menu Accent Color"];
+            if Option.Style then
+                TickBox.ImageColor3 = BorderColor;
+            else
+                TickBox.BorderColor3 = BorderColor;
+                TickBoxOverlay.BorderColor3 = BorderColor;
+            end;
+            if Option.Tip then
+                libraryX.ToolTip.Text = Option.Tip;
+                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+            end;
+        end;
+    end);
 
-	Option.Interest.InputChanged:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
-			libraryX.ToolTip.Position = UDim2.new(0, Input.Position.X + 10, 0, Input.Position.Y + 30);
-		end;
-	end);
+    Option.Interest.InputChanged:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
+            libraryX.ToolTip.Position = UDim2.new(0, Input.Position.X + 10, 0, Input.Position.Y + 30);
+        end;
+    end);
 
-	Option.Interest.InputEnded:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement then
-			if Option.Style then
-				TickBox.ImageColor3 = Color3.new();
-			else
-				TickBox.BorderColor3 = Color3.new();
-				TickBoxOverlay.BorderColor3 = Color3.new();
-			end;
-			libraryX.ToolTip.Position = UDim2.new(2);
-		end;
-	end);
+    Option.Interest.InputEnded:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseMovement then
+            if Option.Style then
+                TickBox.ImageColor3 = Color3.new();
+            else
+                TickBox.BorderColor3 = Color3.new();
+                TickBoxOverlay.BorderColor3 = Color3.new();
+            end;
+            libraryX.ToolTip.Position = UDim2.new(2);
+        end;
+    end);
 
-	function Option:SetState(NewState, NoCallBack)
-		self.State = type(NewState) == "boolean" and NewState or false;
-		libraryX.Flags[self.Flag] = self.State;
-		Option.Title.TextColor3 = self.State and Color3.fromRGB(210, 210, 210) or Color3.fromRGB(160, 160, 160);
-		if Option.Style then
-			TickBoxOverlay.Visible = self.State;
-		else
-			TickBoxOverlay.BackgroundTransparency = self.State and 1 or 0;
-		end;
-		if not NoCallBack then
-			self.CallBack(self.State);
-		end;
-	end;
+    function Option:SetState(NewState, NoCallBack)
+        self.State = type(NewState) == "boolean" and NewState or false;
+        libraryX.Flags[self.Flag] = self.State;
+        Option.Title.TextColor3 = self.State and Color3.fromRGB(210, 210, 210) or Color3.fromRGB(160, 160, 160);
+        if Option.Style then
+            TickBoxOverlay.Visible = self.State;
+        else
+            TickBoxOverlay.BackgroundTransparency = self.State and 1 or 0;
+        end;
+        if not NoCallBack then
+            self.CallBack(self.State);
+        end;
+    end;
 
-	--[[if Option.State ~= nil and libraryX then
-		task.delay(1, function()
-			Option.CallBack(Option.State);
-		end);
-	end;]]
+    --[[if Option.State ~= nil and libraryX then
+        task.delay(1, function()
+            Option.CallBack(Option.State);
+        end);
+    end;]]
 
-	--[[if Option.State ~= nil and libraryX then
-		task.defer(Option.CallBack, Option.State);
-	end;]]
+    --[[if Option.State ~= nil and libraryX then
+        task.defer(Option.CallBack, Option.State);
+    end;]]
 
-	setmetatable(Option, {__newindex = function(A, B, C)
-		if B == "Text" then
-			Option.Title.Text = tostring(C);
-		end;
-	end});
+    setmetatable(Option, {__newindex = function(A, B, C)
+        if B == "Text" then
+            Option.Title.Text = tostring(C);
+        end;
+    end});
 end;
 
 libraryX.CreateButton = function(Option, Parent)
-	Option.HasInit = true;
+    Option.HasInit = true;
 
     Option.Main = libraryX:Create("Frame", {
         LayoutOrder = Option.Position,
@@ -715,343 +708,342 @@ libraryX.CreateButton = function(Option, Parent)
     });
 
     if Option.Style then
-		Option.Title = libraryX:Create("TextLabel", {
-			AnchorPoint = Vector2.new(0.5, 1),
-			Position = UDim2.new(0.5, 0, 1, -6),
-			Size = UDim2.new(1, -12, 0, 14.5),
-			BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-			BorderColor3 = Color3.new(),
-			Text = Option.Text,
-			TextColor3 = Color3.new(1, 1, 1),
-			TextSize = 13,
-			Font = Enum.Font.Code,
-			TextYAlignment = Enum.TextYAlignment["Top"],
-			Parent = Option.Main
-		});
+        Option.Title = libraryX:Create("TextLabel", {
+            AnchorPoint = Vector2.new(0.5, 1),
+            Position = UDim2.new(0.5, 0, 1, -6),
+            Size = UDim2.new(1, -12, 0, 14.5),
+            BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+            BorderColor3 = Color3.new(),
+            Text = Option.Text,
+            TextColor3 = Color3.new(1, 1, 1),
+            TextSize = 13,
+            Font = Enum.Font.Code,
+            TextYAlignment = Enum.TextYAlignment["Top"],
+            Parent = Option.Main
+        });
 
-		libraryX:Create("ImageLabel", {
-			--Position = UDim2.new(0, 0, 0, 1),
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://2592362371",
-			ImageColor3 = Color3.fromRGB(60, 60, 60),
-			ScaleType = Enum.ScaleType.Slice,
-			SliceCenter = Rect.new(2, 2, 62, 62),
-			Parent = Option.Title
-		});
+        libraryX:Create("ImageLabel", {
+            --Position = UDim2.new(0, 0, 0, 1),
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://2592362371",
+            ImageColor3 = Color3.fromRGB(60, 60, 60),
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(2, 2, 62, 62),
+            Parent = Option.Title
+        });
 
-		--[[libraryX:Create("ImageLabel", {
-			Size = UDim2.new(1, -2, 1, -2),
-			Position = UDim2.new(0, 1, 0, 1),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://2592362371",
-			ImageColor3 = Color3.new(),
-			ScaleType = Enum.ScaleType.Slice,
-			SliceCenter = Rect.new(2, 2, 62, 62),
-			Parent = Option.Title
-		});]]
+        --[[libraryX:Create("ImageLabel", {
+            Size = UDim2.new(1, -2, 1, -2),
+            Position = UDim2.new(0, 1, 0, 1),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://2592362371",
+            ImageColor3 = Color3.new(),
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(2, 2, 62, 62),
+            Parent = Option.Title
+        });]]
 
-		--[[libraryX:Create("UIGradient", {
-			Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 180)),
-				ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
-			}),
-			Rotation = -90,
-			Parent = Option.Title
-		});]]
-	else
-		Option.Title = libraryX:Create("TextLabel", {
-			AnchorPoint = Vector2.new(0.5, 1),
-			Position = UDim2.new(0.5, 0, 1, -6),
-			Size = UDim2.new(1, -12, 0, 14.5),
-			BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-			BorderColor3 = Color3.new(),
-			Text = Option.Text,
-			TextColor3 = Color3.new(1, 1, 1),
-			TextSize = 13,
-			Font = Enum.Font.Code,
-			TextYAlignment = Enum.TextYAlignment["Top"],
-			Parent = Option.Main
-		});
+        --[[libraryX:Create("UIGradient", {
+            Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(180, 180, 180)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
+            }),
+            Rotation = -90,
+            Parent = Option.Title
+        });]]
+    else
+        Option.Title = libraryX:Create("TextLabel", {
+            AnchorPoint = Vector2.new(0.5, 1),
+            Position = UDim2.new(0.5, 0, 1, -6),
+            Size = UDim2.new(1, -12, 0, 14.5),
+            BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+            BorderColor3 = Color3.new(),
+            Text = Option.Text,
+            TextColor3 = Color3.new(1, 1, 1),
+            TextSize = 13,
+            Font = Enum.Font.Code,
+            TextYAlignment = Enum.TextYAlignment["Top"],
+            Parent = Option.Main
+        });
 
-		libraryX:Create("ImageLabel", {
-			--Position = UDim2.new(0, 0, 0, 1),
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			Image = "rbxassetid://2592362371",
-			ImageColor3 = Color3.fromRGB(60, 60, 60),
-			ScaleType = Enum.ScaleType.Slice,
-			SliceCenter = Rect.new(2, 2, 62, 62),
-			Parent = Option.Title
-		});
-	end;
+        libraryX:Create("ImageLabel", {
+            --Position = UDim2.new(0, 0, 0, 1),
+            Size = UDim2.new(1, 0, 1, 0),
+            BackgroundTransparency = 1,
+            Image = "rbxassetid://2592362371",
+            ImageColor3 = Color3.fromRGB(60, 60, 60),
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(2, 2, 62, 62),
+            Parent = Option.Title
+        });
+    end;
 
-	Option.Title.InputBegan:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-			Option.CallBack();
-			if libraryX then
-				libraryX.Flags[Option.Flag] = true;
-			end;
-		elseif Input.UserInputType == Enum.UserInputType.MouseMovement then
-			if not (libraryX.Warning or libraryX.Slider) then
-				Option.Title.BorderColor3 = libraryX.Flags["Menu Accent Color"];
-			end;
-		end;
-	end);
+    Option.Title.InputBegan:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+            Option.CallBack();
+            if libraryX then
+                libraryX.Flags[Option.Flag] = true;
+            end;
+        elseif Input.UserInputType == Enum.UserInputType.MouseMovement then
+            if not (libraryX.Warning or libraryX.Slider) then
+                Option.Title.BorderColor3 = libraryX.Flags["Menu Accent Color"];
+            end;
+        end;
+    end);
 
-	Option.Title.InputChanged:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
-			libraryX.ToolTip.Position = UDim2.new(0, Input.Position.X + 10, 0, Input.Position.Y + 30);
-		end;
-	end);
+    Option.Title.InputChanged:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
+            libraryX.ToolTip.Position = UDim2.new(0, Input.Position.X + 10, 0, Input.Position.Y + 30);
+        end;
+    end);
 
-	Option.Main.InputChanged:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
-			if Option.Tip then
-				libraryX.ToolTip.Text = Option.Tip;
-				libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
-			end;
-		end;
-	end);
+    Option.Main.InputChanged:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
+            if Option.Tip then
+                libraryX.ToolTip.Text = Option.Tip;
+                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+            end;
+        end;
+    end);
 
-	Option.Title.InputEnded:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseMovement then
-			Option.Title.BorderColor3 = Color3.new();
-			libraryX.ToolTip.Position = UDim2.new(2);
-		end;
-	end);
+    Option.Title.InputEnded:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseMovement then
+            Option.Title.BorderColor3 = Color3.new();
+            libraryX.ToolTip.Position = UDim2.new(2);
+        end;
+    end);
 end;
 
 libraryX.CreateBind = function(Option, Parent)
-	Option.HasInit = true;
+    Option.HasInit = true;
 
-	local Binding, Loop;
-	if Option.Sub then
-		Option.Main = Option:GetMain();
-	else
-		Option.Main = Option.Main or libraryX:Create("Frame", {
-			LayoutOrder = Option.Position,
-			Size = UDim2.new(1, 0, 0, 20),
-			BackgroundTransparency = 1,
-			Parent = Parent
-		});
+    local Binding, Loop;
+    if Option.Sub then
+        Option.Main = Option:GetMain();
+    else
+        Option.Main = Option.Main or libraryX:Create("Frame", {
+            LayoutOrder = Option.Position,
+            Size = UDim2.new(1, 0, 0, 20),
+            BackgroundTransparency = 1,
+            Parent = Parent
+        });
 
-		libraryX:Create("TextLabel", {
-			Position = UDim2.new(0, 6, 0, 0),
-			Size = UDim2.new(1, -12, 1, 0),
-			BackgroundTransparency = 1,
-			Text = Option.Text,
-			TextSize = 13,
-			Font = Enum.Font.Code,
-			TextColor3 = Color3.fromRGB(210, 210, 210),
-			TextXAlignment = Enum.TextXAlignment["Left"],
-			Parent = Option.Main
-		});
-	end;
+        libraryX:Create("TextLabel", {
+            Position = UDim2.new(0, 6, 0, 0),
+            Size = UDim2.new(1, -12, 1, 0),
+            BackgroundTransparency = 1,
+            Text = Option.Text,
+            TextSize = 13,
+            Font = Enum.Font.Code,
+            TextColor3 = Color3.fromRGB(210, 210, 210),
+            TextXAlignment = Enum.TextXAlignment["Left"],
+            Parent = Option.Main
+        });
+    end;
 
-	local BindInput = libraryX:Create(Option.Sub and "TextButton" or "TextLabel", {
-		Position = UDim2.new(1, -6 - (Option.SubPos or 0), 0, Option.Sub and 2 or 2),
-		SizeConstraint = Enum.SizeConstraint.RelativeYY,
-		BackgroundColor3 = Color3.fromRGB(30, 30, 30),
-		BorderSizePixel = 0,
-		TextSize = 12,
-		Font = Enum.Font.Code,
-		TextColor3 = Color3.fromRGB(160, 160, 160),
-		TextXAlignment = Enum.TextXAlignment["Right"],
-		Parent = Option.Main
-	});
+    local BindInput = libraryX:Create(Option.Sub and "TextButton" or "TextLabel", {
+        Position = UDim2.new(1, -6 - (Option.SubPos or 0), 0, Option.Sub and 2 or 2),
+        SizeConstraint = Enum.SizeConstraint.RelativeYY,
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+        BorderSizePixel = 0,
+        TextSize = 12,
+        Font = Enum.Font.Code,
+        TextColor3 = Color3.fromRGB(160, 160, 160),
+        TextXAlignment = Enum.TextXAlignment["Right"],
+        Parent = Option.Main
+    });
 
-	if Option.Sub then
-		BindInput.AutoButtonColor = false;
-	end;
+    if Option.Sub then
+        BindInput.AutoButtonColor = false;
+    end;
 
-	local Interest = Option.Sub and BindInput or Option.Main;
-	if not Interest then return; end;
+    local Interest = Option.Sub and BindInput or Option.Main;
+    if not Interest then return; end;
 
-	Interest.InputEnded:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 and BindInput then
-			Binding = true;
-			BindInput.Text = "[...]";
-			BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12, "1"), 0, 16);
-			BindInput.TextColor3 = libraryX.Flags["Menu Accent Color"];
-		end;
-	end);
+    Interest.InputEnded:Connect(function(Input)
+        if Input.UserInputType == Enum.UserInputType.MouseButton1 and BindInput then
+            Binding = true;
+            BindInput.Text = "[...]";
+            BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12, "1"), 0, 16);
+            BindInput.TextColor3 = libraryX.Flags["Menu Accent Color"];
+        end;
+    end);
 
-	libraryX:AddConnection(InputService.InputBegan, function(Input)
-		if InputService:GetFocusedTextBox() then return; end;
-		if Binding then
-			local Key = (table.find(WhiteListedMouseInputs, Input.UserInputType) and not Option.NoMouse) and Input.UserInputType;
-			Option:SetKey(Key or (not table.find(BlackListedKeys, Input.KeyCode)) and Input.KeyCode);
-			Option.CallBack(true, 0, Option.Key, true);
-		else
-			if (Input.KeyCode.Name == Option.Key or Input.UserInputType.Name == Option.Key) and not Binding then
-				if Option.Mode == "Toggle" then
-					libraryX.Flags[Option.Flag] = not libraryX.Flags[Option.Flag];
-					Option.CallBack(libraryX.Flags[Option.Flag], 0, Option.Key);
-				else
-					libraryX.Flags[Option.Flag] = true;
-					if Loop then Loop:Disconnect(); end;
-					Loop = libraryX:AddConnection(RunService.RenderStepped, function(Step)
-						if not InputService:GetFocusedTextBox() then
-							Option.CallBack(nil, Step);
-						end;
-					end);
-					Option.CallBack(true, 0, Option.Key)
-				end;
-			end;
-		end;
-	end);
+    libraryX:AddConnection(InputService.InputBegan, function(Input)
+        if InputService:GetFocusedTextBox() then return; end;
+        if Binding then
+            local Key = (table.find(WhiteListedMouseInputs, Input.UserInputType) and not Option.NoMouse) and Input.UserInputType;
+            Option:SetKey(Key or (not table.find(BlackListedKeys, Input.KeyCode)) and Input.KeyCode);
+            Option.CallBack(true, 0, Option.Key, true);
+        else
+            if (Input.KeyCode.Name == Option.Key or Input.UserInputType.Name == Option.Key) and not Binding then
+            if Option.Mode == "Toggle" then
+                libraryX.Flags[Option.Flag] = not libraryX.Flags[Option.Flag];
+                Option.CallBack(libraryX.Flags[Option.Flag], 0, Option.Key);
+            else
+                libraryX.Flags[Option.Flag] = true;
+                if Loop then Loop:Disconnect(); end;
+                    Loop = libraryX:AddConnection(RunService.RenderStepped, function(Step)
+                        if not InputService:GetFocusedTextBox() then
+                            Option.CallBack(nil, Step);
+                        end;
+                    end);
+                    Option.CallBack(true, 0, Option.Key)
+                end;
+            end;
+        end;
+    end);
 
-	libraryX:AddConnection(InputService.InputEnded, function(Input)
-		if Option.Key:lower() ~= "none" then
-			if Input.KeyCode.Name == Option.Key or Input.UserInputType.Name == Option.Key then
-				if Loop then
-					Loop:Disconnect();
-					libraryX.Flags[Option.Flag] = false;
-					Option.CallBack(true, 0, Option.Key);
-				end;
-			end;
-		end;
-	end);
+    libraryX:AddConnection(InputService.InputEnded, function(Input)
+        if Option.Key:lower() ~= "none" then
+            if Input.KeyCode.Name == Option.Key or Input.UserInputType.Name == Option.Key then
+                if Loop then
+                    Loop:Disconnect();
+                    libraryX.Flags[Option.Flag] = false;
+                    Option.CallBack(true, 0, Option.Key);
+                end;
+            end;
+        end;
+    end);
 
-	function Option:SetKey(Key)
-		Binding = false;
-		if BindInput then BindInput.TextColor3 = Color3.fromRGB(160, 160, 160); end;
+    function Option:SetKey(Key)
+        Binding = false;
+        if BindInput then BindInput.TextColor3 = Color3.fromRGB(160, 160, 160); end;
+        if Loop then
+            Loop:Disconnect();
+            libraryX.Flags[Option.Flag] = false;
+            Option.CallBack(true, 0, Option.Key);
+        end;
 
-		if Loop then
-			Loop:Disconnect();
-			libraryX.Flags[Option.Flag] = false;
-			Option.CallBack(true, 0, Option.Key);
-		end;
+        self.Key = Key or self.Key;
+        self.Key = (self.Key.Name or self.Key);
 
-		self.Key = Key or self.Key;
-		self.Key = (self.Key.Name or self.Key);
+        --local KeyMap = {["Backspace"] = "None", ["Escape"] = "None", ["CapsLock"] = "Caps", ["Control"] = "CTRL", ["Left"] = "L", ["Right"] = "R"};
+        --local Replacement = KeyMap[self.Key] or self.Key
+        --Replacement = Replacement:gsub("Button", ""):gsub("Mouse", "M")
 
-		--local KeyMap = {["Backspace"] = "None", ["Escape"] = "None", ["CapsLock"] = "Caps", ["Control"] = "CTRL", ["Left"] = "L", ["Right"] = "R"};
-		--local Replacement = KeyMap[self.Key] or self.Key
-		--Replacement = Replacement:gsub("Button", ""):gsub("Mouse", "M")
+        if self.Key == "Backspace" or self.Key == "Escape" then
+            self.Key = "None";
+            BindInput.Text = "[NONE]";
+        elseif self.Key:match("Mouse") then
+            self.Key:gsub("Button", ""):gsub("Mouse", "M");
+        elseif self.Key:match("Shift") or self.Key:match("Alt") then
+            self.Key:gsub("Left", "L"):gsub("Right", "R");
+        elseif self.Key:match("Caps") then
+            self.Key:gsub("CapsLock", "Caps");
+        elseif self.Key:match("Control") then
+            self.Key:gsub("Control", "CTRL");
+        elseif self.Key:match("Left") or self.Key:match("Right") then
+            self.Key:gsub("Left", "L"):gsub("Right", "R");
+        end;
 
-		if self.Key == "Backspace" or self.Key == "Escape" then
-			self.Key = "None";
-			BindInput.Text = "[NONE]";
-		elseif self.Key:match("Mouse") then
-			self.Key:gsub("Button", ""):gsub("Mouse", "M");
-		elseif self.Key:match("Shift") or self.Key:match("Alt") then
-			self.Key:gsub("Left", "L"):gsub("Right", "R");
-		elseif self.Key:match("Caps") then
-			self.Key:gsub("CapsLock", "Caps");
-		elseif self.Key:match("Control") then
-			self.Key:gsub("Control", "CTRL");
-		elseif self.Key:match("Left") or self.Key:match("Right") then
-			self.Key:gsub("Left", "L"):gsub("Right", "R");
-		end;
-
-		if BindInput then
-			BindInput.Text = "[" .. self.Key:upper() .. "]"; --Replacement:upper()
-			BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12, "1"), 0, 15.5);
-		end;
-	end;
-	Option:SetKey();
+        if BindInput then
+            BindInput.Text = "[" .. self.Key:upper() .. "]"; --Replacement:upper()
+            BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12, "1"), 0, 15.5);
+        end;
+    end;
+    Option:SetKey();
 end;
 
 libraryX.CreateSlider = function(Option, Parent)
-	Option.HasInit = true;
+    Option.HasInit = true;
 
-	if Option.Sub then
-		Option.Main = Option:GetMain();
-		Option.Main.Size = UDim2.new(1, 0, 0, 37.5);
-	else
-		Option.Main = libraryX:Create("Frame", {
-			LayoutOrder = Option.Position,
-			Size = UDim2.new(1, 0, 0, Option.TextPos and 24 or 37.5),
-			BackgroundTransparency = 1,
-			Parent = Parent
-		});
-	end;
+    if Option.Sub then
+        Option.Main = Option:GetMain();
+        Option.Main.Size = UDim2.new(1, 0, 0, 37.5);
+    else
+        Option.Main = libraryX:Create("Frame", {
+            LayoutOrder = Option.Position,
+            Size = UDim2.new(1, 0, 0, Option.TextPos and 24 or 37.5),
+            BackgroundTransparency = 1,
+            Parent = Parent
+        });
+    end;
 
-	Option.Slider = libraryX:Create("Frame", {
-		Position = UDim2.new(0, 6, 0, (Option.Sub and 22 or Option.TextPos and 4 or 19)),
-		Size = UDim2.new(1, -12, 0, 12.5),
-		BackgroundColor3 = Color3.fromRGB(50, 50, 50),
-		BorderColor3 = Color3.new(),
-		Parent = Option.Main
-	});
+    Option.Slider = libraryX:Create("Frame", {
+        Position = UDim2.new(0, 6, 0, (Option.Sub and 22 or Option.TextPos and 4 or 19)),
+        Size = UDim2.new(1, -12, 0, 12.5),
+        BackgroundColor3 = Color3.fromRGB(50, 50, 50),
+        BorderColor3 = Color3.new(),
+        Parent = Option.Main
+    });
 
-	libraryX:Create("ImageLabel", {
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		Image = "rbxassetid://2454009026",
-		ImageColor3 = Color3.new(),
-		ImageTransparency = 0.8,
-		Parent = Option.Slider
-	});
+    libraryX:Create("ImageLabel", {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://2454009026",
+        ImageColor3 = Color3.new(),
+        ImageTransparency = 0.8,
+        Parent = Option.Slider
+    });
 
-	Option.Fill = libraryX:Create("Frame", {
-		BackgroundColor3 = libraryX.Flags["Menu Accent Color"],
-		BorderSizePixel = 0,
-		Parent = Option.Slider
-	});
+    Option.Fill = libraryX:Create("Frame", {
+        BackgroundColor3 = libraryX.Flags["Menu Accent Color"],
+        BorderSizePixel = 0,
+        Parent = Option.Slider
+    });
 
-	libraryX:Create("ImageLabel", {
-		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = 1,
-		Image = "rbxassetid://2592362371",
-		ImageColor3 = Color3.fromRGB(60, 60, 60),
-		ScaleType = Enum.ScaleType.Slice,
-		SliceCenter = Rect.new(2, 2, 62, 62),
-		Parent = Option.Slider
-	});
+    libraryX:Create("ImageLabel", {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://2592362371",
+        ImageColor3 = Color3.fromRGB(60, 60, 60),
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(2, 2, 62, 62),
+        Parent = Option.Slider
+    });
 
-	--[[libraryX:Create("ImageLabel", {
-		Size = UDim2.new(1, -2, 1, -2),
-		Position = UDim2.new(0, 1, 0, 1),
-		BackgroundTransparency = 1,
-		Image = "rbxassetid://2592362371",
-		ImageColor3 = Color3.new(),
-		ScaleType = Enum.ScaleType.Slice,
-		SliceCenter = Rect.new(2, 2, 62, 62),
-		Parent = Option.Slider
-	});]]
+    --[[libraryX:Create("ImageLabel", {
+        Size = UDim2.new(1, -2, 1, -2),
+        Position = UDim2.new(0, 1, 0, 1),
+        BackgroundTransparency = 1,
+        Image = "rbxassetid://2592362371",
+        ImageColor3 = Color3.new(),
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(2, 2, 62, 62),
+        Parent = Option.Slider
+    });]]
 
-	Option.Title = libraryX:Create("TextBox", {
-		Position = UDim2.new((Option.Sub or Option.TextPos) and 0.5 or 0, (Option.Sub or Option.TextPos) and 0 or 6, (Option.Sub or Option.TextPos) and -0.1 or 0, -1.7),
-		Size = UDim2.new(0, 0, 0, (Option.Sub or Option.TextPos) and 14 or 18),
-		--Position = UDim2.new(0, 6, 0, 0),
-		--Size = UDim2.new(1, - ((Option.Sub or Option.TextPos) and 12 or 6), 0, (Option.sub or Option.TextPos) and 12 or 18),
-		BackgroundTransparency = 1,
-		Text = (Option.Text ~= "nil" and Option.Text .. ": " or "") .. Option.Value .. Option.Suffix,
-		TextSize = (Option.Sub or Option.TextPos) and 12 or 13,
-		Font = Enum.Font.Code,
-		TextColor3 = Color3.fromRGB(210, 210, 210),
-		TextXAlignment = (Option.Sub or Option.TextPos) and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left,
-		Parent = (Option.Sub or Option.TextPos) and Option.Slider or Option.Main
-	});
+    Option.Title = libraryX:Create("TextBox", {
+        Position = UDim2.new((Option.Sub or Option.TextPos) and 0.5 or 0, (Option.Sub or Option.TextPos) and 0 or 6, (Option.Sub or Option.TextPos) and -0.1 or 0, -1.7),
+        Size = UDim2.new(0, 0, 0, (Option.Sub or Option.TextPos) and 14 or 18),
+        --Position = UDim2.new(0, 6, 0, 0),
+        --Size = UDim2.new(1, - ((Option.Sub or Option.TextPos) and 12 or 6), 0, (Option.sub or Option.TextPos) and 12 or 18),
+        BackgroundTransparency = 1,
+        Text = (Option.Text ~= "nil" and Option.Text .. ": " or "") .. Option.Value .. Option.Suffix,
+        TextSize = (Option.Sub or Option.TextPos) and 12 or 13,
+        Font = Enum.Font.Code,
+        TextColor3 = Color3.fromRGB(210, 210, 210),
+        TextXAlignment = (Option.Sub or Option.TextPos) and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left,
+        Parent = (Option.Sub or Option.TextPos) and Option.Slider or Option.Main
+    });
 
-	table.insert(libraryX.Theme, Option.Fill);
+    table.insert(libraryX.Theme, Option.Fill);
 
-	libraryX:Create("UIGradient", {
-		Color = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromRGB(115, 115, 115)),
-			ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1)),
-		}),
-		Rotation = -90,
-		Parent = Option.Fill
-	});
+    libraryX:Create("UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(115, 115, 115)),
+            ColorSequenceKeypoint.new(1, Color3.new(1, 1, 1)),
+        }),
+        Rotation = -90,
+        Parent = Option.Fill
+    });
 
-	if Option.Min >= 0 then
-		Option.Fill.Size = UDim2.new((Option.Value - Option.Min) / (Option.Max - Option.Min), 0, 1, 0);
-	else
-		Option.Fill.Position = UDim2.new((0 - Option.Min) / (Option.Max - Option.Min), 0, 0, 0);
-		Option.Fill.Size = UDim2.new(Option.Value / (Option.Max - Option.Min), 0, 1, 0);
-	end;
+    if Option.Min >= 0 then
+        Option.Fill.Size = UDim2.new((Option.Value - Option.Min) / (Option.Max - Option.Min), 0, 1, 0);
+    else
+        Option.Fill.Position = UDim2.new((0 - Option.Min) / (Option.Max - Option.Min), 0, 0, 0);
+        Option.Fill.Size = UDim2.new(Option.Value / (Option.Max - Option.Min), 0, 1, 0);
+    end;
 
-	local ManualInput;
-	Option.Title.Focused:Connect(function()
-		if not ManualInput then
-			Option.Title:ReleaseFocus();
-			Option.Title.Text = (Option.Text == "nil" and "" or Option.Text .. ": ") .. Option.Value .. Option.Suffix;
-		end;
-	end);
+    local ManualInput;
+    Option.Title.Focused:Connect(function()
+        if not ManualInput then
+            Option.Title:ReleaseFocus();
+            Option.Title.Text = (Option.Text == "nil" and "" or Option.Text .. ": ") .. Option.Value .. Option.Suffix;
+        end;
+    end);
 
 	Option.Title.FocusLost:Connect(function()
 		Option.Slider.BorderColor3 = Color3.new();
@@ -1105,22 +1097,6 @@ libraryX.CreateSlider = function(Option, Parent)
 			end;
 		end;
 	end);
-
-	--[[
-	local Round2 = function(Num, Bracket)
-		return tonumber(string.format("%." .. (Bracket or 1) .. "f", Num));
-	end;
-	local Round2 = function(Num, Bracket)
-		return math.round(Num * 10 ^ Bracket) * 10 ^ -Bracket
-	end
-	local Round2 = function(Num, Bracket)
-		return Num * math.floor(Num / Bracket);
-	end;
-	local Round2 = function(Num, Bracket)
-		local Power = 10 ^ Bracket;
-		return math.round(Num * Power) / Power;
-	end;
-	]]
 
 	function Option:SetValue(Value, NoCallBack, Check)
 		Value = type(Value) == "number" and Value or 0;
@@ -1585,7 +1561,7 @@ libraryX.CreateBox = function(Option, Parent)
 		Position = UDim2.new(0, 4, 0, 0),
 		Size = UDim2.new(1, -4, 1, 0),
 		BackgroundTransparency = 1,
-		Text = "" .. Option.Value,
+		Text = "" .. (Option.Value ~= "nil" and Option.Value or ""),
 		TextSize = 13,
 		Font = Enum.Font.Code,
 		TextColor3 = Color3.new(1, 1, 1),
