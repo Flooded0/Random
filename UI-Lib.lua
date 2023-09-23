@@ -327,9 +327,9 @@ function libraryX:Notify(Type, Text, Time)
 		return warn(("Invalid Type, Got %s, Expected String"):format(type(Type)));
     elseif type(Text) ~= "string" then
 		return warn(("Invalid Text, Got %s, Expected String"):format(type(Text)));
-    elseif type(Time) ~= "number" then
-        return warn(("Invalid Time, Got %s, Expected Number"):format(type(Time)));
     end;
+
+	local DTime = DTime or 4;
 
     local NotifyOuter = libraryX:Create("Frame", {
         BorderColor3 = Color3.new(0, 0, 0),
@@ -403,7 +403,7 @@ function libraryX:Notify(Type, Text, Time)
 ---@diagnostic disable-next-line: need-check-nil
 	pcall(NotifyOuter:TweenSize(UDim2.new(0, MaxSize + 10, 0, 20), "Out", "Quad", 0.4, true));
 
-	task.delay(Time or 4, function()
+	task.delay(DTime, function()
 ---@diagnostic disable-next-line: need-check-nil
 		pcall(NotifyOuter:TweenSize(UDim2.new(0, 0, 0, 20), "Out", "Quad", 0.4, true));
 		task.wait(0.4);
