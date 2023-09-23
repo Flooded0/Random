@@ -2,8 +2,7 @@ local Module = {};
 
 local IsZero = function(Number)
     local Epsilon = 1e-9; return (Number > -Epsilon and Number < Epsilon);
-end;
-local CubeRoot = function(Number)
+end; local CubeRoot = function(Number)
     local AbsX = math.abs(Number);
     return (Number > 0) and math.pow(AbsX, (1 / 3)) or -math.pow(AbsX, (1 / 3));
 end;
