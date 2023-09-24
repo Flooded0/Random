@@ -227,7 +227,6 @@ function libraryX:LoadConfig(Config, JsonStr)
                 elseif Option.Type == "List" then
                     task.spawn(function() Option:SetValue(DecodedJSON[Option.Flag]); end);
                 else
-                    print(Option)
                     task.spawn(function() Option:SetValue(DecodedJSON[Option.Flag]); end);
                 end;
             end;
@@ -323,13 +322,15 @@ end});
 ]]
 
 function libraryX:Notify(Type, Text, Time)
+    Time = Time or 4;
+
     if type(Type) ~= "string" then
         return warn(("Invalid Type, Got %s, Expected String"):format(type(Type)));
     elseif type(Text) ~= "string" then
         return warn(("Invalid Text, Got %s, Expected String"):format(type(Text)));
+    elseif type(Time) ~= "number" then
+        return warn(("Invalid Time, Got %s, Expected Number"):format(type(Time)));
     end;
-
-    DTime = DTime or 4;
 
     local NotifyOuter = libraryX:Create("Frame", {
         BorderColor3 = Color3.new(0, 0, 0),
@@ -338,7 +339,7 @@ function libraryX:Notify(Type, Text, Time)
         ClipsDescendants = true,
         ZIndex = 100,
         Parent = libraryX.NotificationArea
-    }); --if not NotifyOuter then return; end;
+    }); if not NotifyOuter then return; end;
 
 	table.insert(libraryX.Notifications, NotifyOuter);
 
@@ -369,8 +370,7 @@ function libraryX:Notify(Type, Text, Time)
         Parent = InnerFrame
     });
 
-    local ErrLookup = {Success = "Success: ", Info = "Info: ",Warning = "Warning: ", Error = "Error: ", None = ""};
-
+    local ErrLookup = {Success = "Success: ", Info = "Info: ", Warning = "Warning: ", Error = "Error: ", None = ""};
     local TextLabel = libraryX:Create("TextLabel", {
         Position = UDim2.new(0, 4, 0, 0),
         Size = UDim2.new(1, -4, 1, 0),
@@ -394,15 +394,13 @@ function libraryX:Notify(Type, Text, Time)
         Parent = NotifyOuter
     }));
 
----@diagnostic disable-next-line: need-check-nil
     pcall(NotifyOuter:TweenSize(UDim2.new(0, MaxSize + 10, 0, 20), "Out", "Quad", 0.4, true));
 
-    task.delay(DTime, function()
----@diagnostic disable-next-line: need-check-nil
+    task.delay(Time, function()
         pcall(NotifyOuter:TweenSize(UDim2.new(0, 0, 0, 20), "Out", "Quad", 0.4, true));
         task.wait(0.4);
-        table.remove(libraryX.Notifications, table.find(libraryX.Notifications, NotifyOuter));
----@diagnostic disable-next-line: need-check-nil
+        local NotifyIndex = table.find(libraryX.Notifications, NotifyOuter);
+        if NotifyIndex then table.remove(libraryX.Notifications, NotifyIndex); end;
         NotifyOuter:Destroy();
     end);
 end;
