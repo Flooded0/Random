@@ -47,7 +47,7 @@ local function FormatValue(Value, DumpFC)
         NumberRange = function(Val) return ("NumberRange.new(%s, %s)"):format(Val.Min, Val.Max); end,
         NumberSequence = function(Val) return ("NumberSequence.new(%s)"):format(table.concat(Val.Keyframes, ", ")); end,
         Rect = function(Val) return ("Rect.new(%s, %s, %s, %s)"):format(Val.Min.X, Val.Min.Y, Val.Max.X, Val.Max.Y); end,
-        Random = function(Val) return ("Random.new(%d)"):format(Val.Seed); end;
+        --Random = function(Val) return ("Random.new(%d)"):format(Val.Seed); end;
         Ray = function(Val) return ("Ray.new(%s, %s)"):format(FormatValue(Val.Origin), FormatValue(Val.Direction)); end,
         --Enum = function(Val) return ("%s.%s"):format(tostring(Val.EnumType), tostring(Val)); end;
         --EnumItem = function(Val) return ("%s.%s"):format(tostring(Val.EnumType), tostring(Val)); end;
