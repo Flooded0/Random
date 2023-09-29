@@ -50,7 +50,6 @@ local function FormatValue(Value, DumpFC)
         Random = function(Val) return ("Random.new(%d)"):format(Val.Seed); end;
         Ray = function(Val) return ("Ray.new(%s, %s)"):format(FormatValue(Val.Origin), FormatValue(Val.Direction)); end,
         Enum = function(Val) return ("%s.%s"):format(tostring(Val.EnumType), tostring(Val)); end;
-        EnumItem = function(Val) return ("%s.%s"):format(tostring(Val.EnumType), tostring(Val)); end;
         RBXScriptConnection = function() return "<RBXScriptConnection>"; end,
         RBXScriptSignal = function() return "<RBXScriptSignal>"; end,
         Axes = function(Val)
