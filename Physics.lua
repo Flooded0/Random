@@ -288,6 +288,74 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
     return TPos;
 end;
 
+function Module.SolveTrajectory2(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
+    Gravity, GravityCorrection, Option = ProjectileGravity or workspace.Gravity, GravityCorrection or 2, Option or 1;
+
+    local Disp = (TPos - Origin);
+    GCorrection = -(Gravity / GravityCorrection);
+
+    -- Call the SolveQuartic function with appropriate parameters
+    local Solutions = {SolveQuartic(
+        GCorrection * GCorrection,
+        -2 * TVelocity.Y * GCorrection,
+        TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
+        2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z,
+        Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
+    )}
+
+    -- Filter out the valid solutions and store them in PosRoots
+    local PosRoots = {}
+    for Index = 1, #Solutions do
+        local Solution = Solutions[Index]
+        if Solution > 0 then
+            table.insert(PosRoots, Solution)
+        end
+    end
+
+    local function CalculateTrajectory(t)
+        local x = Disp.X + TVelocity.X * t;
+        local y = Disp.Y + TVelocity.Y * t - GCorrection * t * t;
+        local z = Disp.Z + TVelocity.Z * t;
+
+        return GCorrection * GCorrection * t * t * t * t - 2 * TVelocity.Y * GCorrection * t * t * t + (TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z) * t * t + (2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z)
+    end
+
+    local function NewtonRaphson()
+        local tolerance = 1e-6
+        local maxIterations = 100
+        local t0 = PosRoots[1] or 0
+        local f0 = CalculateTrajectory(t0)
+
+        local t = t0
+        for i = 1, maxIterations do
+            local f = CalculateTrajectory(t)
+            if math.abs(f) < tolerance then
+                return Origin + TVelocity * t
+            end
+
+            local fDerivative = 4 * GCorrection * GCorrection * t * t * t + 3 * (-2 * TVelocity.Y * GCorrection) * t * t + 2 * (TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z) * t + 2 * (2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z)
+            t = t - f / fDerivative
+
+            if math.abs(t - t0) < tolerance then
+                return Origin + TVelocity * t
+            end
+
+            t0 = t
+        end
+
+        return Origin + TVelocity * t0
+    end
+
+    if Option == 1 then
+        local calculatedPosition = NewtonRaphson()
+        return calculatedPosition
+    elseif Option == 2 then
+        -- Handle Option 2 as needed
+    end
+
+    return TPos;
+end
+
 return Module;
 
 --[[local T = workspace.;
