@@ -114,68 +114,63 @@ local SolveCubic = function(a, b, c, d)
 end;
 
 local SolveQuartic = function(a, b, c, d, e)
-    local NumSolutions;
-    local Solutions = {};
+    local Solutions = {}
 
-    local A = b / a;
-    local B = c / a;
-    local C = d / a;
-    local D = e / a;
+    local A = b / a
+    local B = c / a
+    local C = d / a
+    local D = e / a
 
-    local SqA = A * A;
-    local P = -0.375 * SqA + B;
-    local Q = 0.125 * SqA * A - 0.5 * A * B + C;
-    local R = -(3 / 256) * SqA * SqA + 0.0625 * SqA * B - 0.25 * A * C + D;
+    local SqA = A * A
+    local p = -0.375 * SqA + B
+    local q = 0.125 * SqA * A - 0.5 * A * B + C
+    local R = -(3 / 256) * SqA * SqA + 0.0625 * SqA * B - 0.25 * A * C + D
 
     if IsZero(R) then
         -- No Absolute Term: y(y^3 + py + q) = 0
-        local CubicCoeffs = {Q, P, 0, 1};
-        local CubicRoots = {SolveCubic(1, CubicCoeffs[3], CubicCoeffs[2], CubicCoeffs[1])};
-        NumSolutions = #CubicRoots;
+        local CubicCoeffs = {q, p, 0, 1}
+        local CubicRoots = {SolveCubic(1, CubicCoeffs[3], CubicCoeffs[2], CubicCoeffs[1])}
         for I, Root in ipairs(CubicRoots) do
-            Solutions[I] = Root - 0.25 * A; -- Subtract Sub Directly Here
-        end;
+            Solutions[I] = Root - 0.25 * A -- Subtract Sub Directly Here
+        end
     else
-        -- Solve the resolvent cubic ...
-        local CubicCoeffs = {0.5 * R * P - 0.125 * Q * Q, -R, -0.5 * P};
-        local CubicRoots = {SolveCubic(1, CubicCoeffs[3], CubicCoeffs[2], CubicCoeffs[1])};
-        NumSolutions = #CubicRoots;
+        -- Solve The Resolvent Cubic ...
+        local CubicCoeffs = {0.5 * R * p - 0.125 * q * q, -R, -0.5 * p}
+        local CubicRoots = {SolveCubic(1, CubicCoeffs[3], CubicCoeffs[2], CubicCoeffs[1])}
 
         -- ... And Take One Real Solution ...
-        local Z = CubicRoots[1];
+        local Z = CubicRoots[1]
 
         -- ... To Build Two Quadratic Equations
-        local U = Z * Z - R;
-        local V = 2 * Z - P;
+        local u = Z * Z - R
+        local v = 2 * Z - p
 
-        if U > 0 then
-            U = math.sqrt(U);
+        if u > 0 then
+            u = math.sqrt(u)
         else
-            U = 0;
-        end; if V > 0 then
-            V = math.sqrt(V);
+            u = 0
+        end if v > 0 then
+            v = math.sqrt(v)
         else
-            V = 0;
-        end;
-
-        local QuadCoeffs1 = {Z - U, Q < 0 and -V or V};
-        local QuadCoeffs2 = {Z + U, Q < 0 and V or -V};
-
-        -- Solve The Quadratic Equations
-        local QuadRoots1, QuadRoots2 = {SolveQuadric(1, QuadCoeffs1[2], QuadCoeffs1[1])}, {SolveQuadric(1, QuadCoeffs2[2], QuadCoeffs2[1])};
-        local NumQuadRoots1, NumQuadRoots2 = #QuadRoots1, #QuadRoots2;
-
-        -- Add The Roots To The Solutions
-        for I = 1, NumQuadRoots1 do
-            Solutions[I] = QuadRoots1[I] - 0.25 * A; -- Subtract Sub Directly Here
-        end; for I = 1, NumQuadRoots2 do
-            Solutions[NumQuadRoots2 + I] = QuadRoots2[I] - 0.25 * A -- Subtract Sub directly here
+            v = 0
         end
 
-        NumSolutions = NumQuadRoots1 + NumQuadRoots2;
-    end;
+        local QuadCoeffs1 = {Z - u, q < 0 and -v or v}
+        local QuadCoeffs2 = {Z + u, q < 0 and v or -v}
 
-    return unpack(Solutions, 1, NumSolutions);
+        -- Solve The Quadratic Equations
+        local QuadRoots1 = {SolveQuadric(1, QuadCoeffs1[2], QuadCoeffs1[1])};
+        local QuadRoots2 = {SolveQuadric(1, QuadCoeffs2[2], QuadCoeffs2[1])};
+
+        -- Add The Roots To The Solutions
+        for I = 1, #QuadRoots1 do
+            Solutions[I] = QuadRoots1[I] - 0.25 * A -- Subtract Sub Directly Here
+        end for I = 1, #QuadRoots2 do
+            Solutions[#QuadRoots1 + I] = QuadRoots2[I] - 0.25 * A -- Subtract Sub Directly Here
+        end
+    end
+
+    return Solutions; -- Return Solutions As A Table
 end;
 
 function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
@@ -186,25 +181,23 @@ function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, Projec
 
     if Option == 1 then
         -- Solve the quartic equation
-        local Tof = {SolveQuartic(
+        local Tof = SolveQuartic(
             GCorrection * GCorrection,
             -2 * TVelocity.Y * GCorrection,
             TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
             2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z,
             Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
-        )};
+        );
 
         -- Check If There Are Valid Solutions And Tof > 0
-        if #Tof > 0 then
-            for _, TofS in ipairs(Tof) do
-                if TofS > 0 then
-                    -- Calculate The Updated Position (Return It)
-                    return Origin + Vector3.new(
-                        (Disp.X + TVelocity.X * TofS) / TofS,
-                        (Disp.Y + TVelocity.Y * TofS - GCorrection * TofS * TofS) / TofS,
-                        (Disp.Z + TVelocity.Z * TofS) / TofS
-                    );
-                end;
+        for _, TofS in ipairs(Tof) do
+            if TofS > 0 then
+                -- Calculate The Updated Position (Return It)
+                return Origin + Vector3.new(
+                    (Disp.X + TVelocity.X * TofS) / TofS,
+                    (Disp.Y + TVelocity.Y * TofS - GCorrection * TofS * TofS) / TofS,
+                    (Disp.Z + TVelocity.Z * TofS) / TofS
+                );
             end;
         end;
     elseif Option == 2 then
