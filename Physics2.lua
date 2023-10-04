@@ -132,19 +132,19 @@ local SolveQuartic = function(a, b, c, d, e)
         local CubicCoeffs = {Q, P, 0, 1};
         local CubicRoots = {SolveCubic(1, CubicCoeffs[3], CubicCoeffs[2], CubicCoeffs[1])};
         NumSolutions = #CubicRoots;
-        for Index, Root in ipairs(CubicRoots) do
-            Solutions[Index] = Root;
+        for I, Root in ipairs(CubicRoots) do
+            Solutions[I] = Root - 0.25 * A; -- Subtract Sub Directly Here
         end;
     else
-        -- Solve The Resolvent Cubic
+        -- Solve the resolvent cubic ...
         local CubicCoeffs = {0.5 * R * P - 0.125 * Q * Q, -R, -0.5 * P};
         local CubicRoots = {SolveCubic(1, CubicCoeffs[3], CubicCoeffs[2], CubicCoeffs[1])};
         NumSolutions = #CubicRoots;
 
-        -- And take One Real Solution
+        -- ... And Take One Real Solution ...
         local Z = CubicRoots[1];
 
-        -- To Build Two Quadratic Equations
+        -- ... To Build Two Quadratic Equations
         local U = Z * Z - R;
         local V = 2 * Z - P;
 
@@ -158,26 +158,21 @@ local SolveQuartic = function(a, b, c, d, e)
             V = 0;
         end;
 
-        local QuadCoeffs1, QuadCoeffs2 = {Z - U, Q < 0 and -V or V}, {Z + U, Q < 0 and V or -V};
+        local QuadCoeffs1 = {Z - U, Q < 0 and -V or V};
+        local QuadCoeffs2 = {Z + U, Q < 0 and V or -V};
 
         -- Solve The Quadratic Equations
         local QuadRoots1, QuadRoots2 = {SolveQuadric(1, QuadCoeffs1[2], QuadCoeffs1[1])}, {SolveQuadric(1, QuadCoeffs2[2], QuadCoeffs2[1])};
         local NumQuadRoots1, NumQuadRoots2 = #QuadRoots1, #QuadRoots2;
 
         -- Add The Roots To The Solutions
-        for Index = 1, NumQuadRoots1 do
-            Solutions[Index] = QuadRoots1[Index];
-        end; for Index = 1, NumQuadRoots2 do
-            Solutions[NumQuadRoots1 + Index] = QuadRoots2[Index];
+        for I = 1, NumQuadRoots1 do
+            Solutions[I] = QuadRoots1[I] - 0.25 * A; -- Subtract Sub Directly Here
+        end; for I = 1, NumQuadRoots2 do
+            Solutions[NumQuadRoots1 + I] = QuadRoots2[I] - 0.25 * A;
         end;
 
         NumSolutions = NumQuadRoots1 + NumQuadRoots2;
-    end;
-
-    -- Resubstitute
-    local Sub = 0.25 * A;
-    for Index = 1, NumSolutions do
-        Solutions[Index] = Solutions[Index] - Sub;
     end;
 
     return unpack(Solutions, 1, NumSolutions);
