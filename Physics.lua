@@ -321,30 +321,30 @@ function Module.SolveTrajectory2(Origin, TPos, TVelocity, ProjectileSpeed, Proje
     end
 
     local function NewtonRaphson()
-        local tolerance = 1e-6
-        local maxIterations = 100
-        local t0 = PosRoots[1] or 0
-        local f0 = CalculateTrajectory(t0)
+    local tolerance = 1e-6
+    local maxIterations = 100
+    local t0 = PosRoots[1] or 0
+    local f0 = CalculateTrajectory(t0)
 
-        local t = t0
-        for i = 1, maxIterations do
-            local f = CalculateTrajectory(t)
-            if math.abs(f) < tolerance then
-                return Origin + TVelocity * t
-            end
-
-            local fDerivative = 4 * GCorrection * GCorrection * t * t * t + 3 * (-2 * TVelocity.Y * GCorrection) * t * t + 2 * (TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z) * t + 2 * (2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z)
-            t = t - f / fDerivative
-
-            if math.abs(t - t0) < tolerance then
-                return Origin + TVelocity * t
-            end
-
-            t0 = t
+    local t = t0
+    for i = 1, maxIterations do
+        local f = CalculateTrajectory(t)
+        if math.abs(f) < tolerance then
+            return Origin + TVelocity * t
         end
 
-        return Origin + TVelocity * t0
+        local fDerivative = 4 * GCorrection * GCorrection * t * t * t + 3 * (-2 * TVelocity.Y * GCorrection) * t * t + 2 * (TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z) * t + 2 * (2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z)
+        t = t - f / fDerivative
+
+        if math.abs(t - t0) < tolerance then
+            return Origin + TVelocity * t
+        end
+
+        t0 = t
     end
+
+    return Origin + TVelocity * t0
+end
 
     if Option == 1 then
         local calculatedPosition = NewtonRaphson()
