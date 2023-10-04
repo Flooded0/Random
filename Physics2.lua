@@ -169,8 +169,8 @@ local SolveQuartic = function(a, b, c, d, e)
         for I = 1, NumQuadRoots1 do
             Solutions[I] = QuadRoots1[I] - 0.25 * A; -- Subtract Sub Directly Here
         end; for I = 1, NumQuadRoots2 do
-            Solutions[NumQuadRoots1 + I] = QuadRoots2[I] - 0.25 * A;
-        end;
+            Solutions[NumQuadRoots2 + I] = QuadRoots2[I] - 0.25 * A -- Subtract Sub directly here
+        end
 
         NumSolutions = NumQuadRoots1 + NumQuadRoots2;
     end;
