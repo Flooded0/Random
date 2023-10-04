@@ -3,11 +3,42 @@ local Module = {};
 local IsZero = function(Number, Epsilon)
     Epsilon = Epsilon or 1e-9; return math.abs(Number) < Epsilon;
 end; local CubeRoot = function(Number)
-    local AbsX = math.abs(Number);
-    return (Number > 0) and math.pow(AbsX, (1 / 3)) or -math.pow(AbsX, (1 / 3));
-end;
+    if Number == 0 then
+        return 0;
+    elseif Number > 0 then
+        return math.pow(Number, 1 / 3);
+    else
+        local AbsX = math.abs(Number);
+        local CubeRootMagnitude = math.pow(AbsX, 1 / 3);
+        local Angle = math.atan(math.sqrt(3), 1);
+        local RealPart = CubeRootMagnitude * math.cos(Angle);
+        local ImaginaryPart1, ImaginaryPart2 = CubeRootMagnitude * math.sin(Angle), CubeRootMagnitude * math.sin(-Angle);
+        return RealPart, ImaginaryPart1, ImaginaryPart2;
+    end;
+end; local SolveQuadric = function(A, B, C)
+    if IsZero(A) then
+        if IsZero(B) then
+            return nil;
+        else
+            return -C / B;
+        end;
+    end;
 
-local SolveQuadric = function(A, B, C)
+    local InvA = 1 / A;
+    local P = B * InvA / 2;
+    local Q = C * InvA;
+    local D = P * P - Q;
+
+    if IsZero(D) then
+        return -P;
+    elseif D < 0 then
+        local SqrtD = math.sqrt(-D);
+        return {Real = -P, Imag1 =  SqrtD * InvA / 2, Imag2 = -SqrtD * InvA / 2};
+    else -- if D > 0
+        local SqrtD = math.sqrt(D);
+        return SqrtD - P, -SqrtD - P;
+    end;
+end; --[[local SolveQuadric = function(A, B, C)
     if IsZero(A) then
         if IsZero(B) then
             return nil;
@@ -30,9 +61,7 @@ local SolveQuadric = function(A, B, C)
         local SqrtD = math.sqrt(D);
         return SqrtD - P, -SqrtD - P;
     end;
-end;
-
---[[local SolveCubic = function(A, B, C, D)
+end;]] --[[local SolveCubic = function(A, B, C, D)
     local Discriminant, CoefficientA, CoefficientB, CoefficientC;
 
     CoefficientA, CoefficientB, CoefficientC= B / A, C / A, D / A;
@@ -60,8 +89,7 @@ end;
         local V = -CubeRoot(SqrtD + Q);
         return U + V - (1 / 3) * CoefficientA;
     end;
-end;]]
-local SolveCubic = function(c0, c1, c2, c3)
+end;]] local SolveCubic = function(c0, c1, c2, c3)
 	local s0, s1, s2
 
 	local num, sub
@@ -123,9 +151,7 @@ local SolveCubic = function(c0, c1, c2, c3)
 	if (num > 2) then s2 = s2 - sub end
 
 	return s0, s1, s2
-end
-
-local SolveQuartic = function(c0, c1, c2, c3, c4)
+end; local SolveQuartic = function(c0, c1, c2, c3, c4)
     local s0, s1, s2, s3
 
     local coeffs = {}
