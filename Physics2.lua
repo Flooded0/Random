@@ -1,118 +1,3 @@
-local Module = {};
-
-local IsZero = function(Number, Epsilon)
-    Epsilon = Epsilon or 1e-9; return math.abs(Number) < Epsilon;
-end; local CubeRoot = function(Number)
-    if Number == 0 then
-        return 0;
-    elseif Number > 0 then
-        return math.pow(Number, 1 / 3);
-    else
-        local AbsX = math.abs(Number);
-        local CubeRootMagnitude = math.pow(AbsX, 1 / 3);
-        local Angle = math.atan(math.sqrt(3), 1);
-        local RealPart = CubeRootMagnitude * math.cos(Angle);
-        local ImaginaryPart1, ImaginaryPart2 = CubeRootMagnitude * math.sin(Angle), CubeRootMagnitude * math.sin(-Angle);
-        return RealPart, ImaginaryPart1, ImaginaryPart2;
-    end;
-end;
-
-local SolveQuadric = function(A, B, C)
-    if IsZero(A) then
-        if IsZero(B) then
-            return nil;
-        else
-            return -C / B;
-        end;
-    end;
-
-    local InvA = 1 / A;
-    local P = B * InvA / 2;
-    local Q = C * InvA;
-    local D = P * P - Q;
-
-    if IsZero(D) then
-        return -P;
-    elseif D < 0 then
-        local SqrtD = math.sqrt(-D);
-        return {Real = -P, Imag1 =  SqrtD * InvA / 2, Imag2 = -SqrtD * InvA / 2};
-    else -- if D > 0
-        local SqrtD = math.sqrt(D);
-        return SqrtD - P, -SqrtD - P;
-    end;
-end;
-
---[[local SolveCubic = function(A, B, C, D)
-    local Discriminant, CoefficientA, CoefficientB, CoefficientC;
-
-    CoefficientA, CoefficientB, CoefficientC= B / A, C / A, D / A;
-
-    local P = (-(1 / 3) * (CoefficientA * CoefficientA) + CoefficientB) / 3;
-    local Q = ((2 / 27) * (CoefficientA * CoefficientA * CoefficientA) - (1 / 3) * (CoefficientA * CoefficientB) + CoefficientC) / 2;
-
-    local CB_P = P * P * P;
-    Discriminant = Q * Q + CB_P;
-
-    if IsZero(Discriminant) then
-        if IsZero(Q) then
-            return 0;
-        else
-            local u = CubeRoot(-Q);
-            return 2 * u - (1 / 3) * CoefficientA, -u - (1 / 3) * CoefficientA;
-        end;
-    elseif Discriminant < 0 then
-        local Phi = (1 / 3) * math.acos(-Q / math.sqrt(-CB_P));
-        local T = 2 * math.sqrt(-P);
-        return T * math.cos(Phi) - (1 / 3) * CoefficientA, -T * math.cos(Phi + math.pi / 3) - (1 / 3) * CoefficientA, -T * math.cos(Phi - math.pi / 3) - (1 / 3) * CoefficientA;
-    else
-        local SqrtD = math.sqrt(Discriminant);
-        local U = CubeRoot(SqrtD - Q);
-        local V = -CubeRoot(SqrtD + Q);
-        return U + V - (1 / 3) * CoefficientA;
-    end;
-end;]]
-local SolveCubic = function(a, b, c, d)
-    local NumSolutions;
-    local Solutions = {};
-
-    local A = b / a;
-    local B = c / a;
-    local C = d / a;
-
-    local SqA = A * A;
-    local p = (1/3) * (-SqA + B);
-    local Q = (1/27) * (2 * SqA * A - 3 * A * B + C);
-    local CbP = p * p * p;
-    local D = Q * Q + CbP;
-
-    if IsZero(D) then
-        if IsZero(Q) then -- One Triple Solution
-            NumSolutions = 1;
-            Solutions[1] = -A / 3;
-        else -- One Single And One Double Solution
-            local U = CubeRoot(-Q);
-            NumSolutions = 2;
-            Solutions[1] = 2 * U - A / 3;
-            Solutions[2] = -U - A / 3;
-        end;
-    elseif D < 0 then -- Three Real Solutions
-        local Phi = (1/3) * math.acos(-Q / math.sqrt(-CbP));
-        local SqrtP = math.sqrt(-p);
-        NumSolutions = 3;
-        Solutions[1] = 2 * SqrtP * math.cos(Phi) - A / 3;
-        Solutions[2] = 2 * SqrtP * math.cos(Phi + (2 * math.pi) / 3) - A / 3;
-        Solutions[3] = 2 * SqrtP * math.cos(Phi - (2 * math.pi) / 3) - A / 3;
-    else -- One Real Solution
-        local SqrtD = math.sqrt(D);
-        local u = CubeRoot(SqrtD - Q);
-        local v = -CubeRoot(SqrtD + Q);
-        NumSolutions = 1;
-        Solutions[1] = u + v - A / 3;
-    end;
-
-    return unpack(Solutions, 1, NumSolutions);
-end;
-
 local SolveQuartic = function(a, b, c, d, e)
     local Solutions = {}
 
@@ -149,7 +34,9 @@ local SolveQuartic = function(a, b, c, d, e)
             u = math.sqrt(u)
         else
             u = 0
-        end if v > 0 then
+        end
+
+        if v > 0 then
             v = math.sqrt(v)
         else
             v = 0
@@ -159,87 +46,17 @@ local SolveQuartic = function(a, b, c, d, e)
         local QuadCoeffs2 = {Z + u, q < 0 and v or -v}
 
         -- Solve The Quadratic Equations
-        local QuadRoots1 = {SolveQuadric(1, QuadCoeffs1[2], QuadCoeffs1[1])};
-        local QuadRoots2 = {SolveQuadric(1, QuadCoeffs2[2], QuadCoeffs2[1])};
+        local QuadRoots1 = {SolveQuadric(1, QuadCoeffs1[2], QuadCoeffs1[1])}
+        local QuadRoots2 = {SolveQuadric(1, QuadCoeffs2[2], QuadCoeffs2[1])}
 
         -- Add The Roots To The Solutions
         for I = 1, #QuadRoots1 do
             Solutions[I] = QuadRoots1[I] - 0.25 * A -- Subtract Sub Directly Here
-        end for I = 1, #QuadRoots2 do
+        end
+        for I = 1, #QuadRoots2 do
             Solutions[#QuadRoots1 + I] = QuadRoots2[I] - 0.25 * A -- Subtract Sub Directly Here
         end
     end
 
     return Solutions; -- Return Solutions As A Table
-end;
-
-function Module.SolveTrajectory(Origin, TPos, TVelocity, ProjectileSpeed, ProjectileGravity, GravityCorrection, Option)
-    Gravity, GravityCorrection, Option = ProjectileGravity or workspace.Gravity, GravityCorrection or 2, Option or 1;
-
-    local Disp = (TPos - Origin);
-    GCorrection = -(Gravity / GravityCorrection);
-
-    if Option == 1 then
-        -- Solve the quartic equation
-        local Tof = SolveQuartic(
-            GCorrection * GCorrection,
-            -2 * TVelocity.Y * GCorrection,
-            TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
-            2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z,
-            Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
-        );
-
-        -- Check If There Are Valid Solutions And Tof > 0
-        for _, TofS in ipairs(Tof) do
-            if TofS > 0 then
-                -- Calculate The Updated Position (Return It)
-                return Origin + Vector3.new(
-                    (Disp.X + TVelocity.X * TofS) / TofS,
-                    (Disp.Y + TVelocity.Y * TofS - GCorrection * TofS * TofS) / TofS,
-                    (Disp.Z + TVelocity.Z * TofS) / TofS
-                );
-            end;
-        end;
-    elseif Option == 2 then
-        -- Solve The Quartic Equation
-        local Solutions = {SolveQuartic(
-            GCorrection * GCorrection,
-            -2 * TVelocity.Y * GCorrection,
-            TVelocity.Y * TVelocity.Y - 2 * Disp.Y * GCorrection - ProjectileSpeed * ProjectileSpeed + TVelocity.X * TVelocity.X + TVelocity.Z * TVelocity.Z,
-            2 * Disp.Y * TVelocity.Y + 2 * Disp.X * TVelocity.X + 2 * Disp.Z * TVelocity.Z,
-            Disp.Y * Disp.Y + Disp.X * Disp.X + Disp.Z * Disp.Z
-        )};
-
-        -- Check If There Are Valid Solutions
-        if Solutions then
-            local PosRoots = {};
-
-            -- Find Positive Roots
-            for _, Solution in ipairs(Solutions) do
-                if Solution > 0 then
-                    table.insert(PosRoots, Solution);
-                end;
-            end;
-
-            -- Check If There Are Positive Roots
-            if PosRoots[1] then
-                local PR = PosRoots[1]
-
-                -- Calculate The Updated Position Based On The First Positive Root
-                return Origin + Vector3.new(
-                    (Disp.X + TVelocity.X * PR) / PR,
-                    (Disp.Y + TVelocity.Y * PR - GCorrection * PR * PR) / PR,
-                    (Disp.Z + TVelocity.Z * PR) / PR
-                );
-            end;
-        end;
-    end;
-
-    return TPos;
-end;
-
-return Module;
-
---[[local T = workspace.;
-print(T.Position)
-print(Module.SolveTrajectory(workspace:FindFirstChildOfClass("Camera").CFrame.Position - Vector3.new(0, 1, 0), T.Position, T.AssemblyLinearVelocity, 100, 5, 2, 1));]]
+end
