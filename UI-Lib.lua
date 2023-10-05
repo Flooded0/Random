@@ -2450,7 +2450,7 @@ function libraryX:AddTab(Title, Pos)
             end;
 
             function Section:SetTitle(NewTitle)
-                self.Title = tostring(NewTitle)
+                self.Title = tostring(NewTitle) or "N/A";
                 if self.TitleText then
                     self.TitleText.Text = tostring(NewTitle);
                 end;
@@ -2508,7 +2508,7 @@ function libraryX:AddTab(Title, Pos)
                 self.TitleText = libraryX:Create("TextLabel", {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 12, 0, 0),
-                    Size = UDim2.new(0, libraryX.GetTextBounds(self.Title, Enum.Font.Code, 15, "1") + 5, 0, 4);
+                    Size = UDim2.new(0, libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15, "1") + 5, 0, 4);
                     BackgroundColor3 = Color3.fromRGB(30, 30, 30),
                     BorderSizePixel = 0,
                     Text = self.Title,
@@ -2589,13 +2589,13 @@ function libraryX:AddTab(Title, Pos)
     function Tab:Init()
         if self.HasInit then return; end;
         self.HasInit = true;
-        local Size = libraryX.GetTextBounds(self.Title, Enum.Font.Code, 15, "1") + 6;
+        local Size = libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15, "1") + 6;
 
         self.Button = libraryX:Create("TextLabel", {
             Position = UDim2.new(0, libraryX.TabSize, 0, 15),
             Size = UDim2.new(0, Size, 0, 30),
             BackgroundTransparency = 1,
-            Text = self.Title,
+            Text = self.Title or "N/A",
             TextColor3 = Color3.new(1, 1, 1),
             TextSize = 13,
             Font = Enum.Font.Code,
