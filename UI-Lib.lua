@@ -2589,6 +2589,7 @@ function libraryX:AddTab(Title, Pos)
     function Tab:Init()
         if self.HasInit then return; end;
         self.HasInit = true;
+        print("Fd1")
         local Size = libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15, "1") + 6;
 
         self.Button = libraryX:Create("TextLabel", {
@@ -3077,9 +3078,10 @@ function libraryX:Init(...)
     end;
 
     function self:SelectTab(Tab)
+        print("Fd2", Tab)
         if self.CurrentTab == Tab then return; end;
         if libraryX.PopUp then libraryX.PopUp:Close(); end;
-	if self.CurrentTab then
+	    if self.CurrentTab then
             self.CurrentTab.Button.TextColor3 = Color3.fromRGB(255, 255, 255);
             for _, Column in next, self.CurrentTab.Columns do
                 Column.Main.Visible = false;
