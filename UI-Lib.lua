@@ -2589,8 +2589,7 @@ function libraryX:AddTab(Title, Pos)
     function Tab:Init()
         if self.HasInit then return; end;
         self.HasInit = true;
-        print("Fd1")
-        local Size = libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15, "1") + 6;
+        local Size = libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15) + 6;
 
         self.Button = libraryX:Create("TextLabel", {
             Position = UDim2.new(0, libraryX.TabSize, 0, 15),
@@ -3078,7 +3077,7 @@ function libraryX:Init(...)
     end;
 
     function self:SelectTab(Tab)
-        print("Fd2", Tab)
+        print("Selected Tab:", Tab);
         if self.CurrentTab == Tab then return; end;
         if libraryX.PopUp then libraryX.PopUp:Close(); end;
 	    if self.CurrentTab then
