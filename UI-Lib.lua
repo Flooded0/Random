@@ -136,7 +136,7 @@ end;]] libraryX.FormatNumber = function(Num, DecimalPlaces)
 end;
 
 libraryX.GetTextBounds = function(Text, Font, Size, XY, Resolution)
-    local Bounds = TextService:GetTextSize(Text, Size, Font, Resolution or Vector2.new(9e9, 9e9));
+    XY = XY or "1"; local Bounds = TextService:GetTextSize(Text, Size, Font, Resolution or Vector2.new(9e9, 9e9));
     return (XY == "1" and Bounds.X or XY == "2" and Bounds.Y);
 end;
 
@@ -383,7 +383,7 @@ function libraryX:Notify(Type, Text, Time)
         Parent = InnerFrame
     }); if not TextLabel then return; end;
 
-    local MaxSize = libraryX.GetTextBounds(TextLabel.Text, Enum.Font.Code, 13, "1");
+    local MaxSize = libraryX.GetTextBounds(TextLabel.Text, Enum.Font.Code, 13);
     table.insert(libraryX.Theme, libraryX:Create("Frame", {
         BackgroundColor3 = libraryX.Flags["Menu Accent Color"],
         BorderSizePixel = 0,
@@ -466,13 +466,13 @@ libraryX.CreateDivider = function(Option, Parent)
 
     function Option:SetText(Text)
         Option.Text = Text and tostring(Text) or "";
-        Option.Size  = UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15, "1") + 10, 0, 15);
+        Option.Size  = UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15) + 10, 0, 15);
     end;
 
     setmetatable(Option, {__newindex = function(_, B, C)
         if B == "Text" then
             Option.Title.Text = C and tostring(C) or "";
-            Option.Title.Size = C and UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15, "1") + 10, 0, 15) or UDim2.new();
+            Option.Title.Size = C and UDim2.new(0, libraryX.GetTextBounds(Option.Title.Text, Enum.Font.Code, 15) + 10, 0, 15) or UDim2.new();
             Option.Main.Size = UDim2.new(1, 0, 0, 18);
         end;
     end});
@@ -640,7 +640,7 @@ libraryX.CreateToggle = function(Option, Parent)
             end;
             if Option.Tip then
                 libraryX.ToolTip.Text = Option.Tip;
-                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14), 0, 20);
             end;
         end;
     end);
@@ -800,7 +800,7 @@ libraryX.CreateButton = function(Option, Parent)
         if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
             if Option.Tip then
                 libraryX.ToolTip.Text = Option.Tip;
-                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14), 0, 20);
             end;
         end;
     end);
@@ -863,7 +863,7 @@ libraryX.CreateBind = function(Option, Parent)
         if Input.UserInputType == Enum.UserInputType.MouseButton1 and BindInput then
             Binding = true;
             BindInput.Text = "[...]";
-            BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12, "1"), 0, 16);
+            BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12), 0, 16);
             BindInput.TextColor3 = libraryX.Flags["Menu Accent Color"];
         end;
     end);
@@ -938,7 +938,7 @@ libraryX.CreateBind = function(Option, Parent)
 
         if BindInput then
             BindInput.Text = "[" .. self.Key:upper() .. "]"; --Replacement:upper()
-            BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12, "1"), 0, 15.5);
+            BindInput.Size = UDim2.new(0, -libraryX.GetTextBounds(BindInput.Text, Enum.Font.Code, 12), 0, 15.5);
         end;
     end;
     Option:SetKey();
@@ -1076,7 +1076,7 @@ libraryX.CreateSlider = function(Option, Parent)
             end;
             if Option.Tip then
                 libraryX.ToolTip.Text = Option.Tip;
-                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14), 0, 20);
             end;
         end;
     end);
@@ -1325,7 +1325,7 @@ libraryX.CreateList = function(Option, Parent)
     Interest.InputBegan:Connect(function(Input)
         if Input.UserInputType == Enum.UserInputType.MouseMovement and Option.Tip then
             libraryX.ToolTip.Text = Option.Tip;
-            libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+            libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14), 0, 20);
         end;
     end);
 
@@ -1588,7 +1588,7 @@ libraryX.CreateBox = function(Option, Parent)
             end;
             if Option.Tip then
                 libraryX.ToolTip.Text = Option.Tip;
-                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+                libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14), 0, 20);
             end;
         end;
     end);
@@ -2010,7 +2010,7 @@ libraryX.CreateColor = function(Option, Parent)
                 end;
                 if Option.Tip then
                     libraryX.ToolTip.Text = Option.Tip;
-                    libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14, "1"), 0, 20);
+                    libraryX.ToolTip.Size = UDim2.new(0, libraryX.GetTextBounds(Option.Tip, Enum.Font.Code, 14), 0, 20);
                 end;
             end;
 	end);
@@ -2508,7 +2508,7 @@ function libraryX:AddTab(Title, Pos)
                 self.TitleText = libraryX:Create("TextLabel", {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Position = UDim2.new(0, 12, 0, 0),
-                    Size = UDim2.new(0, libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15, "1") + 5, 0, 4);
+                    Size = UDim2.new(0, libraryX.GetTextBounds((self.Title or "N/A"), Enum.Font.Code, 15) + 5, 0, 4);
                     BackgroundColor3 = Color3.fromRGB(30, 30, 30),
                     BorderSizePixel = 0,
                     Text = self.Title,
@@ -2602,8 +2602,7 @@ function libraryX:AddTab(Title, Pos)
             TextWrapped = true,
             ClipsDescendants = true,
             Parent = libraryX.Main
-        });
-        libraryX.TabSize = libraryX.TabSize + Size;
+        }); libraryX.TabSize = libraryX.TabSize + Size;
 
         self.Button.InputBegan:Connect(function(Input)
             if Input.UserInputType == Enum.UserInputType.MouseButton1 then
